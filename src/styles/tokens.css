@@ -1,0 +1,72 @@
+/* Design tokens — palette, type, spacing, motion. */
+:root {
+  /* Palette (from spec) */
+  --color-beige: #F5EFE6;
+  --color-beige-deep: #ECE3D2;
+  --color-sage: #8FAF8B;
+  --color-sage-soft: #B8CDB5;
+  --color-sky: #A8C9DC;
+  --color-sky-soft: #D6E5EF;
+  --color-navy: #1E3A5F;
+  --color-navy-soft: #3A557A;
+  --color-white: #FFFFFF;
+  --color-gold: #C9A96E;
+  --color-text: #3A3A3A;
+  --color-text-soft: #6B6B6B;
+
+  /* Status tints */
+  --status-pending: #D9A441;
+  --status-confirmed: var(--color-sage);
+  --status-declined: #B86F6F;
+
+  /* Type families */
+  --font-display: 'Cormorant Garamond', 'Georgia', serif;
+  --font-body: 'DM Sans', 'Helvetica Neue', system-ui, sans-serif;
+  --font-script: 'Great Vibes', 'Brush Script MT', cursive;
+
+  /* Fluid type scale */
+  --fs-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.85rem);
+  --fs-sm: clamp(0.875rem, 0.82rem + 0.25vw, 1rem);
+  --fs-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --fs-md: clamp(1.125rem, 1.05rem + 0.4vw, 1.35rem);
+  --fs-lg: clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+  --fs-xl: clamp(2rem, 1.7rem + 1.5vw, 3rem);
+  --fs-2xl: clamp(2.75rem, 2.2rem + 2.75vw, 4.5rem);
+  --fs-3xl: clamp(3.75rem, 2.8rem + 4.5vw, 6.5rem);
+
+  /* Spacing */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+  --sp-9: 6rem;
+  --sp-10: 8rem;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(30, 58, 95, 0.06), 0 2px 8px rgba(30, 58, 95, 0.04);
+  --shadow-md: 0 4px 12px rgba(30, 58, 95, 0.08), 0 8px 24px rgba(30, 58, 95, 0.06);
+  --shadow-lg: 0 12px 32px rgba(30, 58, 95, 0.12), 0 24px 56px rgba(30, 58, 95, 0.08);
+
+  /* Motion */
+  --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 180ms;
+  --dur-mid: 420ms;
+  --dur-slow: 800ms;
+  --dur-xslow: 1400ms;
+
+  /* Layout */
+  --container-max: 1200px;
+  --container-pad: clamp(1.25rem, 4vw, 3rem);
+  --nav-h: 68px;
+}

@@ -1,0 +1,323 @@
+.landing {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-7) var(--sp-4);
+  position: relative;
+  overflow: hidden;
+  perspective: 1600px;
+}
+
+.landing__bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 110%, rgba(168, 201, 220, 0.32), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(143, 175, 139, 0.22), transparent 70%),
+    var(--color-beige);
+  z-index: -1;
+}
+.landing__bg--photo {
+  background-size: cover !important;
+  background-position: center !important;
+}
+.landing__bg--photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(245, 239, 230, 0.55) 0%, rgba(245, 239, 230, 0.85) 100%);
+}
+
+.landing__skip {
+  position: absolute;
+  top: var(--sp-4);
+  right: var(--sp-5);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  background: rgba(255, 255, 255, 0.6);
+  padding: 0.55em 1em;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+}
+.landing__skip:hover { color: var(--color-navy); background: var(--color-white); }
+
+/* ─── ENVELOPE ─────────────────────────────────────────────────────────── */
+.envelope {
+  --env-w: clamp(280px, 70vw, 540px);
+  --env-h: calc(var(--env-w) * 0.66);
+  width: var(--env-w);
+  height: var(--env-h);
+  position: relative;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  outline: none;
+}
+.envelope:focus-visible { box-shadow: 0 0 0 4px rgba(143, 175, 139, 0.4); border-radius: 14px; }
+.envelope.is-open { cursor: default; }
+
+/* The two faces of the envelope body */
+.envelope__back, .envelope__front {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+}
+.envelope__back {
+  background: linear-gradient(160deg, #E2D6BC 0%, #D6C7A6 100%);
+  box-shadow: var(--shadow-md);
+  z-index: 1;
+}
+.envelope__front {
+  background:
+    /* Two diagonal "fold" lines from top corners meeting at center-70% */
+    linear-gradient(to top right, transparent 49.7%, rgba(120, 90, 40, 0.18) 49.85%, rgba(120, 90, 40, 0.18) 50.15%, transparent 50.3%),
+    linear-gradient(to top left,  transparent 49.7%, rgba(120, 90, 40, 0.18) 49.85%, rgba(120, 90, 40, 0.18) 50.15%, transparent 50.3%),
+    /* Subtle envelope-front shading */
+    linear-gradient(160deg, #D8C7A4 0%, #C6B187 100%);
+  background-size: 50% 70%, 50% 70%, 100% 100%;
+  background-position: left top, right top, 0 0;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 -10px 20px rgba(140, 110, 60, 0.18);
+  z-index: 3;
+}
+
+/* Flap group — pivots from the top edge. Contains the flap triangle AND the
+   wax seal, so they rotate together when opening. */
+.envelope__flap-group {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 70%;
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform 1100ms cubic-bezier(0.6, 0.02, 0.3, 0.98);
+  transform-style: preserve-3d;
+  z-index: 5;
+}
+.envelope.is-open .envelope__flap-group {
+  transform: rotateX(-180deg);
+  z-index: 1;
+}
+
+.envelope__flap {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(170deg, #DCC9A2 0%, #C9B280 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  box-shadow: 0 2px 6px rgba(120, 90, 40, 0.18);
+  backface-visibility: hidden;
+}
+
+/* Wax seal sits at the flap's bottom tip — where the flap meets the
+   envelope body, the way real wax seals are placed. Fades to 0 on open so
+   it doesn't fly off-screen with the rotating flap (visible on mobile). */
+.wax-seal {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: clamp(54px, 13%, 80px);
+  height: clamp(54px, 13%, 80px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #A8492F 0%, #7E2E1C 65%, #4F1B0E 100%);
+  box-shadow:
+    inset 0 -4px 8px rgba(0,0,0,0.4),
+    inset 0 4px 8px rgba(255,255,255,0.18),
+    0 5px 12px rgba(0,0,0,0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 500ms ease-out 150ms;
+}
+.envelope.is-open .wax-seal { opacity: 0; }
+.wax-seal__ring {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  border: 1px dashed rgba(245, 239, 230, 0.4);
+}
+.wax-seal__mono {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  color: #F2E1C9;
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+.wax-seal__amp {
+  font-family: var(--font-script);
+  font-size: 1.2em;
+  vertical-align: -0.05em;
+  margin: 0 0.05em;
+}
+
+/* Invitation card (sits hidden inside the envelope, slides up when opened).
+   `top` is intentionally below the front's V-cutout so the card is hidden when closed.
+   When opened, translateY raises the card up + out past the envelope's top edge. */
+/* Card matches envelope dimensions when closed — fully hidden behind front + flap.
+   When opened, slides up so its bottom edge lands exactly at the V-fold (top
+   of the envelope's front), cleanly covering the opened flap area on every
+   viewport. The card top extends ~20% above the envelope — enough for the
+   names + invitation text to be visible without crowding the browser chrome. */
+.envelope__card {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 5%;
+  bottom: 5%;
+  background: var(--color-beige);
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(30, 58, 95, 0.1);
+  z-index: 2;
+  transform: translateY(0);
+  transition: transform 1100ms cubic-bezier(0.4, 0, 0.2, 1) 400ms;
+  padding: clamp(0.6rem, 1.8vw, 1.2rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.envelope.is-open .envelope__card { z-index: 4; }
+.envelope__card.is-out {
+  transform: translateY(-28%);
+  box-shadow: 0 12px 28px rgba(30, 58, 95, 0.18);
+}
+
+.envelope__card-inner {
+  text-align: center;
+  border: 1px solid rgba(201, 169, 110, 0.4);
+  padding: clamp(0.4rem, 2vw, 1.2rem) clamp(0.6rem, 2.5vw, 1.4rem);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18em;
+  line-height: 1.25;
+}
+
+.card__eyebrow {
+  font-family: var(--font-body);
+  font-size: clamp(0.55rem, 1.4vw, 0.75rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  line-height: 1.2;
+}
+/* Hide the decorative eyebrow on very small screens where vertical space
+   is tight inside the card — the names + date are the essential info. */
+@media (max-width: 380px) {
+  .card__eyebrow { display: none; }
+}
+.card__names {
+  font-family: var(--font-script);
+  font-size: clamp(1.75rem, 7vw, 3.6rem);
+  color: var(--color-navy);
+  margin: 0.05em 0;
+  line-height: 1;
+}
+.card__divider {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  color: var(--color-gold);
+  margin: 0.25em 0;
+}
+.card__divider span {
+  display: block;
+  flex: 0 0 clamp(20px, 6vw, 50px);
+  height: 1px;
+  background: currentColor;
+}
+.card__divider svg {
+  width: clamp(10px, 2vw, 14px);
+  height: auto;
+}
+.card__date {
+  font-family: var(--font-display);
+  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  color: var(--color-navy);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.card__venue {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.8rem, 1.9vw, 1rem);
+  color: var(--color-text);
+  margin: 0;
+}
+.card__venue-city {
+  font-family: var(--font-body);
+  font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  margin: 0;
+}
+.card__time {
+  font-family: var(--font-body);
+  font-size: clamp(0.7rem, 1.7vw, 0.9rem);
+  color: var(--color-sage);
+  margin-top: 0.4em;
+}
+
+/* CTA below */
+.landing__cta {
+  margin-top: clamp(var(--sp-6), 8vh, var(--sp-9));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 700ms var(--ease-soft), transform 700ms var(--ease-soft);
+  pointer-events: none;
+}
+.landing__cta.is-show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.landing__hint {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-text-soft);
+  font-size: var(--fs-sm);
+  margin: 0;
+}
+
+/* ─── PETALS ──────────────────────────────────────────────────────────── */
+.petals {
+  position: absolute;
+  inset: -20% -10% -10% -10%;
+  pointer-events: none;
+  z-index: 10;
+}
+.petal {
+  position: absolute;
+  top: 30%;
+  width: 14px;
+  height: 14px;
+  border-radius: 60% 10% 60% 10%;
+  opacity: 0;
+  animation: petal-fall 2.2s cubic-bezier(0.4, 0.1, 0.5, 1) forwards;
+}
+.petal--0 { background: var(--color-sage); }
+.petal--1 { background: var(--color-gold); }
+.petal--2 { background: var(--color-sky); }
+.petal--3 { background: #E8C0C0; }
+
+@keyframes petal-fall {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15%  { opacity: 1; }
+  100% { transform: translate(calc((var(--dx, 0) - 0.5) * 200px), 80vh) rotate(540deg); opacity: 0; }
+}

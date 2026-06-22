@@ -1,0 +1,49 @@
+.placeholder {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+  color: rgba(30, 58, 95, 0.18);
+  box-shadow: var(--shadow-sm);
+}
+.placeholder--sage {
+  background: linear-gradient(135deg, #EBF1E9 0%, #D8E5D4 60%, #C9DCC4 100%);
+}
+.placeholder--sky {
+  background: linear-gradient(135deg, #E9F1F6 0%, #CFE0EC 100%);
+}
+.placeholder--gold {
+  background: linear-gradient(135deg, #F5EFE6 0%, #E8D9BC 100%);
+}
+.placeholder--has-image { box-shadow: var(--shadow-md); }
+.placeholder--has-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.placeholder__leaf {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  opacity: 0.6;
+  filter: drop-shadow(0 2px 6px rgba(30, 58, 95, 0.08));
+}
+
+.placeholder__label {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-sm);
+  color: rgba(30, 58, 95, 0.6);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.4em 1em;
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(4px);
+}
