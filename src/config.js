@@ -244,18 +244,29 @@ const config = {
    * The guest list. `section` MUST match a `guestSections.id` above.
    * `rsvpStatus` is one of: 'pending', 'confirmed', 'declined'.
    * The Guest List page is password-protected — see `guestListPassword`.
+   *
+   * Add or remove entries below — the page updates automatically.
+   * Tip: keep the list alphabetised within each section for easy scanning.
    */
   guests: [
-    // Example entries — replace with your real guests
-    { name: 'Guest Name', section: 'family', rsvpStatus: 'pending', plusOne: false },
-    { name: 'Guest Name', section: 'vip', rsvpStatus: 'pending', plusOne: true },
+    // Family
+    { name: 'Example Family Member 1', section: 'family', rsvpStatus: 'pending' },
+    { name: 'Example Family Member 2', section: 'family', rsvpStatus: 'pending' },
+    // VIP
+    { name: 'Example VIP Guest', section: 'vip', rsvpStatus: 'pending' },
+    // Bridesmaids
+    { name: 'Example Bridesmaid', section: 'bridesmaids', rsvpStatus: 'pending' },
+    // Groomsmen
+    { name: 'Example Groomsman', section: 'groomsmen', rsvpStatus: 'pending' },
+    // Entourage
+    { name: 'Example Entourage Member', section: 'entourage', rsvpStatus: 'pending' },
   ],
 
   /**
    * Shared password to unlock the Guest List page.
    * Anyone with the password can see the list — keep it for guests only.
    */
-  guestListPassword: 'tamjenn2027',
+  guestListPassword: 'xyz12345',
 
   /**
    * The reminder cards on the Reminders page (and a teaser on Home).
