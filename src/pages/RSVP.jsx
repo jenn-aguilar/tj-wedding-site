@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import emailjs from '@emailjs/browser'
 import config from '../config.js'
@@ -7,15 +7,50 @@ import SectionHeader from '../components/SectionHeader.jsx'
 import './RSVP.css'
 
 const STATE = { idle: 'idle', sending: 'sending', success: 'success', error: 'error' }
+const STORAGE_KEY = 'tj-rsvps'
 
 function emailValid(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
 }
 
+/** Read the map of all previously-submitted RSVPs from this browser. */
+function getStoredRsvps() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+function getStoredRsvp(email) {
+  const key = email.trim().toLowerCase()
+  if (!key) return null
+  return getStoredRsvps()[key] || null
+}
+
+function saveStoredRsvp(email, data) {
+  try {
+    const key = email.trim().toLowerCase()
+    const all = getStoredRsvps()
+    all[key] = { ...data, submittedAt: new Date().toISOString() }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
+  } catch { /* localStorage unavailable — fail quietly */ }
+}
+
+const EMPTY_FORM = {
+  name: '',
+  email: '',
+  attending: '',
+  kids: '0',
+  dietary: '',
+  song: '',
+  message: '',
+}
+
 export default function RSVP() {
   const deadlinePast = useMemo(() => {
     const d = new Date(config.wedding.rsvpDeadline)
-    // Give until end of day in the wedding's timezone
     d.setHours(23, 59, 59, 999)
     return Date.now() > d.getTime()
   }, [])
@@ -29,19 +64,45 @@ function RsvpForm() {
   const [status, setStatus] = useState(STATE.idle)
   const [errors, setErrors] = useState({})
   const [errorMsg, setErrorMsg] = useState('')
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    attending: '',
-    guests: '1',
-    dietary: '',
-    song: '',
-    message: '',
-  })
+  const [form, setForm] = useState(EMPTY_FORM)
+  /** Set true once we load a prior RSVP — flagged in the EmailJS payload so the
+      couple knows this submission is an edit, not a new guest. */
+  const [isUpdate, setIsUpdate] = useState(false)
+  /** When the email field matches a previous reply, show a banner offering load. */
+  const [foundPrior, setFoundPrior] = useState(null)
+
+  // Watch the email field — debounced — and check localStorage for a prior reply
+  useEffect(() => {
+    const handle = setTimeout(() => {
+      if (!emailValid(form.email)) { setFoundPrior(null); return }
+      // If we've already loaded a prior reply for this same email, no need to
+      // re-prompt (the form already contains the loaded data).
+      if (isUpdate && form.email.trim().toLowerCase() === (foundPrior?.email || '').trim().toLowerCase()) return
+      const prior = getStoredRsvp(form.email)
+      setFoundPrior(prior ? { ...prior, email: form.email } : null)
+    }, 350)
+    return () => clearTimeout(handle)
+  }, [form.email, isUpdate]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const setField = (key) => (e) => {
     setForm((f) => ({ ...f, [key]: e.target.value }))
     if (errors[key]) setErrors((er) => ({ ...er, [key]: undefined }))
+  }
+
+  const loadPrior = () => {
+    if (!foundPrior) return
+    setForm({
+      name: foundPrior.name || '',
+      email: foundPrior.email || form.email,
+      attending: foundPrior.attending || '',
+      kids: foundPrior.kids || '0',
+      dietary: foundPrior.dietary || '',
+      song: foundPrior.song || '',
+      message: foundPrior.message || '',
+    })
+    setIsUpdate(true)
+    setFoundPrior(null)
+    setErrors({})
   }
 
   const validate = () => {
@@ -50,8 +111,8 @@ function RsvpForm() {
     if (!emailValid(form.email)) next.email = 'Please enter a valid email address.'
     if (!form.attending) next.attending = 'Let us know if you can join us.'
     if (form.attending === 'yes') {
-      const n = Number(form.guests)
-      if (!Number.isInteger(n) || n < 1 || n > 2) next.guests = 'Pick 1 or 2 guests.'
+      const n = Number(form.kids)
+      if (!Number.isInteger(n) || n < 0 || n > 2) next.kids = 'Pick between 0 and 2 kids.'
     }
     setErrors(next)
     return Object.keys(next).length === 0
@@ -72,10 +133,11 @@ function RsvpForm() {
       user_email: form.email.trim(),
       reply_to: form.email.trim(),
       attending: form.attending === 'yes' ? 'YES — joining the celebration 🎉' : 'No — unable to attend 😢',
-      guests: form.attending === 'yes' ? form.guests : '0',
+      kids: form.attending === 'yes' ? form.kids : '0',
       dietary: form.dietary.trim() || '—',
       song: form.song.trim() || '—',
       message: form.message.trim() || '—',
+      is_update: isUpdate ? 'Yes — this replaces an earlier reply' : 'No — new RSVP',
       to_email: recipientEmail || '',
     }
 
@@ -83,10 +145,10 @@ function RsvpForm() {
       if (hasEmailJS) {
         await emailjs.send(emailjsServiceId, emailjsTemplateId, params, { publicKey: emailjsPublicKey })
       } else {
-        // Demo mode: simulate a network round-trip so the form is testable
-        // before EmailJS credentials are added to config.rsvp.
         await new Promise((resolve) => setTimeout(resolve, 900))
       }
+      // Save to localStorage so the guest can return and update on this device
+      saveStoredRsvp(form.email, form)
       setStatus(STATE.success)
     } catch (err) {
       setStatus(STATE.error)
@@ -95,7 +157,14 @@ function RsvpForm() {
   }
 
   if (status === STATE.success) {
-    return <SuccessState attending={form.attending} name={form.name.trim()} onReset={() => { setStatus(STATE.idle); setForm((f) => ({ ...f, attending: '', guests: '1', dietary: '', song: '', message: '' })) }} />
+    return (
+      <SuccessState
+        attending={form.attending}
+        name={form.name.trim()}
+        wasUpdate={isUpdate}
+        onReset={() => { setStatus(STATE.idle); /* keep form contents so they can fine-tune */ }}
+      />
+    )
   }
 
   return (
@@ -108,6 +177,13 @@ function RsvpForm() {
 
           <Reveal delay={0.1}>
             <form className="rsvp-card" onSubmit={onSubmit} noValidate>
+
+              {isUpdate && (
+                <div className="rsvp-banner rsvp-banner--info" role="status">
+                  ✏️ Editing your previous RSVP — make any changes below and resubmit.
+                </div>
+              )}
+
               <div className="rsvp-row rsvp-row--two">
                 <Field label="Full name" htmlFor="rsvp-name" error={errors.name} required>
                   <input
@@ -122,7 +198,7 @@ function RsvpForm() {
                   />
                 </Field>
 
-                <Field label="Email address" htmlFor="rsvp-email" error={errors.email} required>
+                <Field label="Email address" htmlFor="rsvp-email" error={errors.email} required hint="Use the same email if you've replied before">
                   <input
                     id="rsvp-email"
                     type="email"
@@ -135,6 +211,27 @@ function RsvpForm() {
                   />
                 </Field>
               </div>
+
+              {foundPrior && !isUpdate && (
+                <div className="rsvp-banner rsvp-banner--found" role="status">
+                  <span aria-hidden="true">💛</span>
+                  <div>
+                    <strong>We found a previous reply from this email</strong>
+                    <small>Submitted {formatPrior(foundPrior.submittedAt)} — load it and pick up where you left off.</small>
+                  </div>
+                  <button type="button" className="btn btn--ghost rsvp-banner__cta" onClick={loadPrior}>
+                    Load my reply
+                  </button>
+                </div>
+              )}
+
+              <p className="rsvp-couples-note">
+                <span aria-hidden="true">💡</span>
+                <span>
+                  <strong>Attending as a couple?</strong> Please have <em>each adult</em> submit their own RSVP — one form
+                  per person. (Kids you bring along go in the "kids" field below.)
+                </span>
+              </p>
 
               <fieldset className={`rsvp-radio-group ${errors.attending ? 'has-error' : ''}`} aria-invalid={!!errors.attending}>
                 <legend>Will you join us? <span className="rsvp-req">*</span></legend>
@@ -161,17 +258,17 @@ function RsvpForm() {
 
               {form.attending === 'yes' && (
                 <>
-                  <Field label="Number of guests (including you)" htmlFor="rsvp-guests" error={errors.guests} hint="1 or 2 — let us know if you're bringing a plus-one">
-                    <input
-                      id="rsvp-guests"
-                      type="number"
-                      min="1"
-                      max="2"
-                      step="1"
-                      value={form.guests}
-                      onChange={setField('guests')}
-                      aria-invalid={!!errors.guests}
-                    />
+                  <Field label="Kids you're bringing" htmlFor="rsvp-kids" error={errors.kids} hint="Maximum 2 kids per adult">
+                    <select
+                      id="rsvp-kids"
+                      value={form.kids}
+                      onChange={setField('kids')}
+                      aria-invalid={!!errors.kids}
+                    >
+                      <option value="0">No kids</option>
+                      <option value="1">1 child</option>
+                      <option value="2">2 children</option>
+                    </select>
                   </Field>
 
                   <Field label="Dietary requirements or allergies" htmlFor="rsvp-dietary" hint="Optional — we'll let the kitchen know">
@@ -184,7 +281,7 @@ function RsvpForm() {
                     />
                   </Field>
 
-                  <Field label="Song request" htmlFor="rsvp-song" hint="What will get you on the dance floor?">
+                  {/* <Field label="Song request" htmlFor="rsvp-song" hint="What will get you on the dance floor?">
                     <input
                       id="rsvp-song"
                       type="text"
@@ -192,7 +289,7 @@ function RsvpForm() {
                       onChange={setField('song')}
                       placeholder="Artist — Song title"
                     />
-                  </Field>
+                  </Field> */}
                 </>
               )}
 
@@ -214,18 +311,40 @@ function RsvpForm() {
 
               <div className="rsvp-actions">
                 <button type="submit" className="btn btn--primary rsvp-submit" disabled={status === STATE.sending}>
-                  {status === STATE.sending ? 'Sending…' : 'Send my RSVP →'}
+                  {status === STATE.sending ? 'Sending…' : isUpdate ? 'Update my RSVP →' : 'Send my RSVP →'}
                 </button>
                 <p className="rsvp-actions__deadline">
                   Deadline: <strong>{config.wedding.rsvpDeadlineDisplay}</strong>
                 </p>
               </div>
+
+              <p className="rsvp-edit-hint">
+                <span aria-hidden="true">💛</span>
+                <span>
+                  <strong>Made a mistake or need to change something?</strong> Come back to this page anytime and resubmit your RSVP using the
+                  same email.
+                </span>
+              </p>
+
             </form>
           </Reveal>
         </div>
       </section>
     </div>
   )
+}
+
+/** Friendly relative-ish timestamp for the "found prior reply" banner. */
+function formatPrior(iso) {
+  if (!iso) return 'earlier'
+  const d = new Date(iso)
+  const diff = (Date.now() - d.getTime()) / 1000
+  if (diff < 60) return 'just now'
+  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+  const days = Math.floor(diff / 86400)
+  if (days < 30) return `${days}d ago`
+  return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 function Field({ label, htmlFor, error, hint, required, children }) {
@@ -241,7 +360,7 @@ function Field({ label, htmlFor, error, hint, required, children }) {
   )
 }
 
-function SuccessState({ attending, name, onReset }) {
+function SuccessState({ attending, name, wasUpdate, onReset }) {
   const isYes = attending === 'yes'
   return (
     <div className="page rsvp-page">
@@ -257,15 +376,17 @@ function SuccessState({ attending, name, onReset }) {
           <Reveal>
             <div className="rsvp-success__card">
               <span className="rsvp-success__icon" aria-hidden="true">{isYes ? '🎉' : '💛'}</span>
-              <h1>{isYes ? 'Yay! We can\'t wait.' : 'Thank you for letting us know.'}</h1>
+              <h1>{wasUpdate ? 'Updated! Thanks for letting us know.' : isYes ? 'Yay! We can\'t wait.' : 'Thank you for letting us know.'}</h1>
               <p className="rsvp-success__lead">
-                {isYes
+                {wasUpdate
+                  ? `Thanks, ${name.split(' ')[0]}. We've got your latest reply on file.`
+                  : isYes
                   ? `Thanks, ${name.split(' ')[0]}! Your RSVP is in. We'll be in touch with more details closer to the day.`
                   : `Thanks, ${name.split(' ')[0]}. We'll miss you in Đà Nẵng, but we appreciate you taking the time to reply. 💛`}
               </p>
               <div className="rsvp-success__actions">
                 <Link to="/home" className="btn btn--primary">← Back to home</Link>
-                <button type="button" className="btn btn--ghost" onClick={onReset}>Update my RSVP</button>
+                <button type="button" className="btn btn--ghost" onClick={onReset}>Edit again</button>
               </div>
             </div>
           </Reveal>
