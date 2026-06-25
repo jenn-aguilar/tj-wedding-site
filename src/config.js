@@ -122,6 +122,11 @@ const config = {
     name: 'Mikazuki Resorts Da Nang',
     address: 'Nguyễn Tất Thành, Hải Vân, Đà Nẵng 55000, Vietnam',
     googleMapsUrl: 'https://maps.app.goo.gl/zooDtJd62KCKK2Bk7',
+    /**
+     * Paste the iframe `src` URL from Google Maps → Share → Embed a map
+     * (just the src value, e.g. https://www.google.com/maps/embed?pb=...).
+     * Leave blank to show a soft placeholder.
+     */
     googleMapsEmbed: '',
     description:
       'A stunning beachside resort nestled between the mountains and the East Sea in Da Nang, Vietnam.',
@@ -132,7 +137,14 @@ const config = {
       { icon: '🍽️', label: 'Fine Dining' },
       { icon: '🏔️', label: 'Mountain Views' },
     ],
+    /** Resort's own website. Leave blank to hide the "Visit Resort Website" button. */
     websiteUrl: '',
+    /** Optional full-bleed image at the top of the dedicated Venue page. */
+    heroImage: '',
+    /**
+     * Photo gallery on the Venue page. Drop files in `/public/venue/` and
+     * reference them here as `{ src: '/venue/pool.jpg', caption: 'The pool', alt: 'Pool at Mikazuki Resorts' }`.
+     */
     photos: [],
   },
 
