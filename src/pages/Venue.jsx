@@ -4,9 +4,29 @@ import Reveal from '../components/Reveal.jsx'
 import Placeholder from '../components/Placeholder.jsx'
 import './Venue.css'
 
+/**
+ * Accepts any common YouTube URL form (watch, shorts, youtu.be, embed) OR a
+ * bare 11-char video ID and returns a privacy-enhanced embed URL.
+ * Returns '' if no video ID can be extracted.
+ */
+function toYoutubeEmbed(input) {
+  if (!input) return ''
+  const str = String(input).trim()
+  // Bare video ID
+  if (/^[\w-]{11}$/.test(str)) {
+    return `https://www.youtube-nocookie.com/embed/${str}?rel=0`
+  }
+  // Pull the 11-char ID out of any standard URL shape
+  const match = str.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([\w-]{11})/)
+  if (match) return `https://www.youtube-nocookie.com/embed/${match[1]}?rel=0`
+  return ''
+}
+
 export default function Venue() {
   const venue = config.venue
   const hero = venue.heroImage || config.images?.venueHeroImage || ''
+  const youtubeEmbed = toYoutubeEmbed(venue.youtubeUrl)
+  const moreLabel = venue.morePhotosLabel || 'View the full gallery ↗'
 
   return (
     <div className="page venue-page">
@@ -80,6 +100,32 @@ export default function Venue() {
         </section>
       )}
 
+      {/* ─── VIDEO TOUR (optional) ──────────────────────── */}
+      {youtubeEmbed && (
+        <section className="section section--beige venue-video-section">
+          <div className="container">
+            <Reveal>
+              <div className="venue-section-head">
+                <span className="venue-eyebrow">Video tour</span>
+                <h2>Take a virtual look around</h2>
+              </div>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="venue-video">
+                <iframe
+                  src={youtubeEmbed}
+                  title={`${venue.name} video tour`}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
+                />
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      )}
+
       {/* ─── PHOTO GALLERY ──────────────────────────────── */}
       <section className="section section--beige">
         <div className="container">
@@ -112,6 +158,22 @@ export default function Venue() {
               ))
             )}
           </div>
+
+          {venue.morePhotosUrl && (
+            <Reveal delay={0.25}>
+              <div className="venue-photos__cta">
+                <a
+                  href={venue.morePhotosUrl}
+                  className="btn btn--primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {moreLabel}
+                </a>
+                <p>For the full collection of photos and videos.</p>
+              </div>
+            </Reveal>
+          )}
         </div>
       </section>
 
