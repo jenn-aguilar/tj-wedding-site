@@ -1,0 +1,74 @@
+.reminders-page { min-height: 100vh; }
+
+.reminders-shell { max-width: 1000px; }
+
+.reminders-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+}
+@media (min-width: 640px) {
+  .reminders-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.reminder-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(143, 175, 139, 0.18);
+  box-shadow: var(--shadow-sm);
+  padding: var(--sp-6) var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  height: 100%;
+  position: relative;
+  transition: transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.reminder-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+/* Top stripe in a rotating palette — gives the grid visual rhythm without
+   needing per-card config. Cycles through sage / sky / gold every 3 cards. */
+.reminder-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--sp-5);
+  width: 40px;
+  height: 3px;
+  border-radius: 0 0 var(--radius-pill) var(--radius-pill);
+  background: var(--color-sage);
+}
+.reminders-grid li:nth-child(3n+2) .reminder-card::before { background: var(--color-sky); }
+.reminders-grid li:nth-child(3n+3) .reminder-card::before { background: var(--color-gold); }
+
+.reminder-card__icon {
+  font-size: 2.6rem;
+  line-height: 1;
+  margin-bottom: var(--sp-2);
+}
+
+.reminder-card__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  color: var(--color-navy);
+  margin: 0 0 var(--sp-2);
+  font-weight: 600;
+}
+
+.reminder-card__body {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-soft);
+  line-height: 1.6;
+}
+
+.reminders-empty {
+  text-align: center;
+  color: var(--color-text-soft);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+}

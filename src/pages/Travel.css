@@ -1,0 +1,288 @@
+/* ─── Travel page — mobile-first ─────────────────────────── */
+.travel-page { min-height: 100vh; }
+
+.travel-hero {
+  padding-top: calc(var(--nav-h) + var(--sp-7));
+}
+
+/* ─── Section heads (consistent with Venue) ─── */
+.travel-section-head {
+  text-align: center;
+  margin-bottom: var(--sp-7);
+  max-width: 60ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.travel-eyebrow {
+  display: block;
+  font-family: var(--font-script);
+  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  color: var(--color-sage);
+  line-height: 1;
+  margin-bottom: var(--sp-3);
+}
+.travel-section-head h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  color: var(--color-navy);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ─── Getting There — 3 cards ─── */
+.travel-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+  max-width: 1080px;
+  margin: 0 auto;
+}
+@media (min-width: 720px) {
+  .travel-cards { grid-template-columns: repeat(3, 1fr); }
+}
+
+.travel-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(143, 175, 139, 0.18);
+  box-shadow: var(--shadow-sm);
+  padding: var(--sp-6) var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  transition: transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+  height: 100%;
+}
+.travel-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+.travel-card__icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  margin-bottom: var(--sp-2);
+}
+.travel-card h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  color: var(--color-navy);
+  margin: 0 0 var(--sp-2);
+  font-weight: 500;
+}
+.travel-card p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-soft);
+  line-height: 1.6;
+}
+.travel-card__link {
+  margin-top: var(--sp-3);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-sm);
+  color: var(--color-sage);
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+  align-self: flex-start;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.travel-card__link:hover { color: var(--color-navy); }
+
+/* ─── Accommodation feature card ─── */
+.travel-hotel {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(143, 175, 139, 0.18);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+@media (min-width: 760px) {
+  .travel-hotel { grid-template-columns: 4fr 5fr; }
+}
+
+/* The placeholder normally has aspect-ratio 4/3, which would otherwise be used
+   as the grid row's intrinsic size and clip the taller body column on the
+   right. Force aspect-ratio off here so the row sizes to the body content
+   and the image stretches to fill. */
+.travel-hotel__media {
+  display: flex;
+  min-height: 240px;
+}
+.travel-hotel__media .placeholder {
+  border-radius: 0;
+  box-shadow: none;
+  height: 100%;
+  width: 100%;
+  /* !important required because the Placeholder component sets aspect-ratio
+     inline; without overriding it, the grid uses the placeholder's natural
+     4/3 height as the row size and clips the body column. */
+  aspect-ratio: auto !important;
+}
+.travel-hotel__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.travel-hotel__body {
+  padding: clamp(var(--sp-5), 3vw, var(--sp-6));
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0; /* allow the column to shrink so flex children can wrap, not blow out */
+}
+
+.travel-hotel__featured {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;
+  padding: 0.3em 0.8em;
+  background: rgba(201, 169, 110, 0.18);
+  color: var(--color-navy);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.travel-hotel__name {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  color: var(--color-navy);
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.travel-hotel__dates {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+  border-top: 1px dashed rgba(30, 58, 95, 0.12);
+  border-bottom: 1px dashed rgba(30, 58, 95, 0.12);
+  padding: var(--sp-4) 0;
+}
+.travel-hotel__dates li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.travel-hotel__dates strong {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  font-weight: 600;
+}
+.travel-hotel__dates span {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  color: var(--color-navy);
+}
+
+.travel-hotel__notes {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-text);
+}
+
+.travel-hotel__booking {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-soft);
+}
+
+.travel-hotel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+}
+
+/* Disabled "booking soon" button — visible but inert */
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+}
+
+/* ─── Local transport ─── */
+.travel-transport {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-3);
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(143, 175, 139, 0.18);
+  box-shadow: var(--shadow-sm);
+  padding: var(--sp-6) clamp(var(--sp-4), 4vw, var(--sp-7));
+  max-width: 720px;
+  margin: 0 auto;
+}
+.travel-transport__icon {
+  font-size: 2.6rem;
+  line-height: 1;
+}
+.travel-transport p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* ─── Tips grid ─── */
+.travel-tips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--sp-4);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.travel-tips li {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(143, 175, 139, 0.18);
+  padding: var(--sp-5);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  transition: transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.travel-tips li:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.travel-tips__icon { font-size: 2rem; line-height: 1; }
+.travel-tips li h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  margin: 0;
+  color: var(--color-navy);
+  font-weight: 500;
+}
+.travel-tips li p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-soft);
+  line-height: 1.5;
+}

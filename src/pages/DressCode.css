@@ -1,0 +1,136 @@
+.dress-page { min-height: 100vh; }
+
+.dress-eyebrow {
+  display: block;
+  font-family: var(--font-script);
+  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  color: var(--color-sage);
+  line-height: 1;
+  margin-bottom: var(--sp-3);
+}
+.dress-section-head {
+  text-align: center;
+  margin-bottom: var(--sp-7);
+  max-width: 60ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.dress-section-head h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  color: var(--color-navy);
+  margin: 0;
+  font-weight: 500;
+}
+.dress-section-head__sub {
+  margin-top: var(--sp-3);
+  color: var(--color-text-soft);
+  font-size: var(--fs-sm);
+}
+
+/* ─── Notes paragraph under the hero ─── */
+.dress-notes {
+  max-width: 60ch;
+  margin: 0 auto;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* ─── Palette grid ─── */
+.dress-palette-section { max-width: 1080px; }
+
+.dress-palette {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-3);
+  max-width: 880px;
+  margin: 0 auto var(--sp-6);
+}
+@media (min-width: 720px) {
+  .dress-palette { grid-template-columns: repeat(4, 1fr); }
+}
+
+.dress-swatch {
+  --swatch: var(--color-sage);
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(143, 175, 139, 0.16);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.dress-swatch:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+.dress-swatch__color {
+  background: var(--swatch);
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dress-swatch__meta {
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.dress-swatch__meta h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  color: var(--color-navy);
+  margin: 0;
+  font-weight: 500;
+}
+.dress-swatch__meta code {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--color-text-soft);
+}
+
+.dress-palette__note {
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-text-soft);
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+
+/* ─── Music / Spotify ─── */
+.dress-music { max-width: 880px; }
+
+.dress-spotify {
+  max-width: 720px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: #1A1A1A;
+}
+.dress-spotify iframe {
+  width: 100%;
+  height: 380px;
+  border: 0;
+  display: block;
+}
+.dress-spotify__fallback {
+  text-align: center;
+  color: var(--color-text-soft);
+  font-family: var(--font-display);
+  font-style: italic;
+}
+
+.dress-music__cta {
+  margin-top: var(--sp-5);
+  text-align: center;
+}
