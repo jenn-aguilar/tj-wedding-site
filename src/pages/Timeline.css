@@ -1,0 +1,268 @@
+/* ─── Timeline page — mobile-first ─────────────────────────── */
+.timeline-page { min-height: 100vh; }
+
+.timeline-section { padding-top: 0; }
+
+.timeline-eyebrow {
+  display: block;
+  font-family: var(--font-script);
+  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  color: var(--color-sage);
+  line-height: 1;
+  margin-bottom: var(--sp-3);
+}
+
+/* ─── Timeline list ─── */
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 880px;
+  position: relative;
+}
+
+/* MOBILE-FIRST: single column with rail on the LEFT, cards on the right */
+.timeline-item {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: var(--sp-3);
+  position: relative;
+  padding-bottom: var(--sp-5);
+}
+
+.timeline-item__rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 36px;
+}
+
+.timeline-item__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-sage);
+  border: 3px solid var(--color-beige);
+  box-shadow: 0 0 0 1px rgba(143, 175, 139, 0.4);
+  margin-top: 0.4rem;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.timeline-item__line {
+  position: absolute;
+  top: 1.8rem;
+  bottom: -1rem;
+  width: 1.5px;
+  background: linear-gradient(180deg, var(--color-sage) 0%, var(--color-gold) 100%);
+  opacity: 0.4;
+  z-index: 1;
+}
+
+.timeline-item__card {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(143, 175, 139, 0.18);
+  box-shadow: var(--shadow-sm);
+  padding: var(--sp-4) var(--sp-5);
+  transition: transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.timeline-item__card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.timeline-item__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.timeline-item__icon { font-size: 1.6rem; line-height: 1; }
+
+.timeline-item__time {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-navy);
+  letter-spacing: 0.04em;
+}
+
+.timeline-item__badge {
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--color-gold);
+  color: var(--color-navy);
+  padding: 0.2em 0.7em;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+}
+
+.timeline-item__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  color: var(--color-navy);
+  margin: 0 0 var(--sp-2);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.timeline-item__desc {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-soft);
+  line-height: 1.55;
+}
+
+/* Featured ceremony card — slightly larger, gold accents */
+.timeline-item.is-featured .timeline-item__card {
+  border-color: var(--color-gold);
+  box-shadow: 0 4px 20px rgba(201, 169, 110, 0.18), var(--shadow-sm);
+  background: linear-gradient(180deg, var(--color-white) 0%, #FBF6EC 100%);
+}
+.timeline-item.is-featured .timeline-item__title {
+  font-size: var(--fs-xl);
+  color: var(--color-navy);
+}
+.timeline-item.is-featured .timeline-item__dot {
+  background: var(--color-gold);
+  width: 16px;
+  height: 16px;
+  box-shadow: 0 0 0 1px var(--color-gold), 0 0 0 6px rgba(201, 169, 110, 0.2);
+}
+
+/* ─── DESKTOP: alternating left/right with center rail ─── */
+@media (min-width: 820px) {
+  .timeline { padding: 0; }
+
+  .timeline-item {
+    grid-template-columns: 1fr 48px 1fr;
+    gap: var(--sp-4);
+    padding-bottom: var(--sp-6);
+  }
+
+  .timeline-item__rail {
+    grid-column: 2;
+    width: 48px;
+  }
+
+  .timeline-item--left .timeline-item__card {
+    grid-column: 1;
+    text-align: right;
+  }
+  .timeline-item--right .timeline-item__card {
+    grid-column: 3;
+    text-align: left;
+  }
+
+  /* When card sits on the right, push the head content to the right side */
+  .timeline-item--left .timeline-item__head {
+    justify-content: flex-end;
+  }
+
+  /* Reorder so the icon visually anchors to the rail side */
+  .timeline-item--left .timeline-item__head { flex-direction: row-reverse; }
+}
+
+/* ─── Pre-wedding events ─── */
+.timeline-pre-head {
+  text-align: center;
+  margin-bottom: var(--sp-6);
+  max-width: 60ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.timeline-pre-head h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  color: var(--color-navy);
+  margin: 0 0 var(--sp-3);
+  font-weight: 500;
+}
+.timeline-pre-head__sub { color: var(--color-text-soft); font-size: var(--fs-sm); margin: 0; }
+
+.timeline-pre-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+  max-width: 720px;
+}
+
+.timeline-pre-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(143, 175, 139, 0.18);
+  box-shadow: var(--shadow-sm);
+  padding: var(--sp-5) var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.timeline-pre-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  justify-content: space-between;
+}
+.timeline-pre-card__head h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  color: var(--color-navy);
+  margin: 0;
+  font-weight: 500;
+}
+.timeline-pre-card__tag {
+  background: var(--color-navy);
+  color: var(--color-beige);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.3em 0.8em;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+}
+
+.timeline-pre-card__meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem var(--sp-3);
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+.timeline-pre-card__meta dt {
+  color: var(--color-text-soft);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.timeline-pre-card__meta dd { margin: 0; color: var(--color-navy); }
+
+.timeline-pre-card__groups {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+}
+.timeline-pre-card__groups-label { color: var(--color-text-soft); }
+.timeline-pre-card__group {
+  background: rgba(168, 201, 220, 0.25);
+  color: var(--color-navy);
+  padding: 0.25em 0.7em;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+
+.timeline-pre-card__notes {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-text-soft);
+  font-size: var(--fs-sm);
+}
