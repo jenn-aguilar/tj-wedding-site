@@ -2,11 +2,13 @@ import React from 'react'
 import config from '../config.js'
 import Reveal from '../components/Reveal.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
+import PageGate from '../components/PageGate.jsx'
 import './Reminders.css'
 
 export default function Reminders() {
   const reminders = config.reminders || []
   return (
+    <PageGate show={config.pages?.reminders !== false} eyebrow="Good to Know" title="A few gentle reminders">
     <div className="page reminders-page">
       <section className="section section--beige">
         <div className="container reminders-shell">
@@ -38,5 +40,6 @@ export default function Reminders() {
         </div>
       </section>
     </div>
+    </PageGate>
   )
 }

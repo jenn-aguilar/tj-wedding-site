@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import config from '../config.js'
 import Reveal from '../components/Reveal.jsx'
 import Placeholder from '../components/Placeholder.jsx'
+import PageGate from '../components/PageGate.jsx'
+import PhotoCarousel from '../components/PhotoCarousel.jsx'
+import Lightbox from '../components/Lightbox.jsx'
 import './Venue.css'
 
 /**
@@ -28,7 +31,14 @@ export default function Venue() {
   const youtubeEmbed = toYoutubeEmbed(venue.youtubeUrl)
   const moreLabel = venue.morePhotosLabel || 'View the full gallery ↗'
 
+  const [openPhotoIdx, setOpenPhotoIdx] = useState(null)
+  const closeLightbox = useCallback(() => setOpenPhotoIdx(null), [])
+  const photoCount = venue.photos?.length || 0
+  const prevPhoto = useCallback(() => setOpenPhotoIdx((i) => (i === null ? null : (i - 1 + photoCount) % photoCount)), [photoCount])
+  const nextPhoto = useCallback(() => setOpenPhotoIdx((i) => (i === null ? null : (i + 1) % photoCount)), [photoCount])
+
   return (
+    <PageGate show={config.pages?.venue !== false} eyebrow="The Venue" title={venue.name}>
     <div className="page venue-page">
       {/* ─── HERO ───────────────────────────────────────── */}
       <section className={`venue-hero ${hero ? 'venue-hero--photo' : ''}`}>
@@ -96,6 +106,22 @@ export default function Venue() {
                 </Reveal>
               ))}
             </ul>
+            {venue.ratesPdfUrl && (
+              <Reveal delay={0.25}>
+                <div className="venue-amenities__cta">
+                  <a
+                    href={venue.ratesPdfUrl}
+                    className="btn btn--primary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="venue-amenities__cta-icon" aria-hidden="true">📄</span>
+                    {venue.ratesLabel || 'View room & villa rates (PDF)'} ↗
+                  </a>
+                  {/* <p className="venue-amenities__cta-note">Opens in a new tab.</p> */}
+                </div>
+              </Reveal>
+            )}
           </div>
         </section>
       )}
@@ -126,38 +152,36 @@ export default function Venue() {
         </section>
       )}
 
-      {/* ─── PHOTO GALLERY ──────────────────────────────── */}
+      {/* ─── PHOTO CAROUSEL ─────────────────────────────── */}
       <section className="section section--beige">
         <div className="container">
           <Reveal>
             <div className="venue-section-head">
               <span className="venue-eyebrow">A look around</span>
               <h2>Photos of the resort</h2>
+              {photoCount > 0 && (
+                <p className="venue-section-head__sub">Swipe or use the arrows to browse.</p>
+              )}
             </div>
           </Reveal>
-          <div className="venue-photos">
-            {venue.photos?.length > 0 ? (
-              venue.photos.map((photo, i) => (
-                <Reveal key={photo.src || i} delay={Math.min(i * 0.05, 0.3)}>
-                  <figure className="venue-photo">
-                    <img
-                      src={photo.src}
-                      alt={photo.alt || `${venue.name} photo`}
-                      loading="lazy"
-                    />
-                    {photo.caption && <figcaption>{photo.caption}</figcaption>}
-                  </figure>
-                </Reveal>
-              ))
-            ) : (
-              // Empty-state placeholders so the section never looks broken
-              Array.from({ length: 4 }).map((_, i) => (
-                <Reveal key={i} delay={Math.min(i * 0.05, 0.2)}>
-                  <Placeholder ratio="4/3" tone={i % 2 === 0 ? 'sage' : 'sky'} label="Photo coming soon" />
-                </Reveal>
-              ))
-            )}
-          </div>
+
+          {photoCount > 0 ? (
+            <Reveal delay={0.1}>
+              <PhotoCarousel
+                photos={venue.photos}
+                ratio="4/3"
+                ariaLabel={`${venue.name} photo gallery`}
+                onPhotoClick={(i) => setOpenPhotoIdx(i)}
+              />
+            </Reveal>
+          ) : (
+            // Empty-state — single placeholder so the section never looks broken
+            <Reveal delay={0.1}>
+              <div className="venue-photos-empty">
+                <Placeholder ratio="16/10" tone="sage" label="Resort photos coming soon" />
+              </div>
+            </Reveal>
+          )}
 
           {venue.morePhotosUrl && (
             <Reveal delay={0.25}>
@@ -175,6 +199,14 @@ export default function Venue() {
             </Reveal>
           )}
         </div>
+
+        <Lightbox
+          photos={venue.photos || []}
+          index={openPhotoIdx}
+          onClose={closeLightbox}
+          onPrev={prevPhoto}
+          onNext={nextPhoto}
+        />
       </section>
 
       {/* ─── MAP ────────────────────────────────────────── */}
@@ -231,5 +263,6 @@ export default function Venue() {
         </div>
       </section>
     </div>
+    </PageGate>
   )
 }

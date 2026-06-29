@@ -1,9 +1,10 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import useTheme from './hooks/useTheme.js'
 import Nav from './components/Nav.jsx'
 import Footer from './components/Footer.jsx'
 import ScrollProgress from './components/ScrollProgress.jsx'
+import BackToTop from './components/BackToTop.jsx'
 import Landing from './pages/Landing.jsx'
 import Home from './pages/Home.jsx'
 import Travel from './pages/Travel.jsx'
@@ -32,10 +33,14 @@ function DocumentTitle() {
   return null
 }
 
+/** Pages where the "Back to top" arrow should NOT render (per user spec) */
+const HIDE_BACK_TO_TOP = new Set(['/', '/entourage', '/rsvp', '/guest-list'])
+
 export default function App() {
   useTheme()
   const { pathname } = useLocation()
   const isLanding = pathname === '/'
+  const showBackToTop = !isLanding && !HIDE_BACK_TO_TOP.has(pathname)
 
   return (
     <>
@@ -47,7 +52,9 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/home" element={<Home />} />
         <Route path="/travel" element={<Travel />} />
-        <Route path="/guest-list" element={<GuestList />} />
+        <Route path="/entourage" element={<GuestList />} />
+        {/* Legacy redirect — old bookmarks to /guest-list still land in the right place */}
+        <Route path="/guest-list" element={<Navigate to="/entourage" replace />} />
         <Route path="/timeline" element={<Timeline />} />
         <Route path="/rsvp" element={<RSVP />} />
         <Route path="/dress-code" element={<DressCode />} />
@@ -56,6 +63,7 @@ export default function App() {
         <Route path="/venue" element={<Venue />} />
         <Route path="*" element={<Home />} />
       </Routes>
+      {showBackToTop && <BackToTop />}
       {!isLanding && <Footer />}
     </>
   )

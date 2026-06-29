@@ -4,6 +4,7 @@ import emailjs from '@emailjs/browser'
 import config from '../config.js'
 import Reveal from '../components/Reveal.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
+import PageGate from '../components/PageGate.jsx'
 import './RSVP.css'
 
 const STATE = { idle: 'idle', sending: 'sending', success: 'success', error: 'error' }
@@ -55,9 +56,11 @@ export default function RSVP() {
     return Date.now() > d.getTime()
   }, [])
 
-  if (deadlinePast) return <DeadlinePassed />
-
-  return <RsvpForm />
+  return (
+    <PageGate show={config.pages?.rsvp !== false} eyebrow="RSVP" title="Reply with love">
+      {deadlinePast ? <DeadlinePassed /> : <RsvpForm />}
+    </PageGate>
+  )
 }
 
 function RsvpForm() {

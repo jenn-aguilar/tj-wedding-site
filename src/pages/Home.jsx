@@ -69,7 +69,10 @@ export default function Home() {
       <section className="section section--sage">
         <div className="container home-two-col">
           <Reveal className="home-two-col__media">
-            <Placeholder label="Mikazuki Resorts" ratio="4/3" tone="sage" image={config.images.venueCardImage} alt={config.venue.name} />
+            <Link to="/venue" className="home-two-col__media-link" aria-label={`See more about ${config.venue.name}`}>
+              <Placeholder label="Mikazuki Resorts" ratio="4/3" tone="sage" image={config.images.venueCardImage} alt={config.venue.name} />
+              <span className="home-two-col__media-hint" aria-hidden="true">See the venue →</span>
+            </Link>
           </Reveal>
           <Reveal delay={0.1} className="home-two-col__copy">
             <span className="home-eyebrow">The Venue</span>
@@ -85,7 +88,10 @@ export default function Home() {
       <section className="section section--beige">
         <div className="container home-two-col home-two-col--reverse">
           <Reveal className="home-two-col__media">
-            <Placeholder label="Da Nang, Vietnam" ratio="4/3" tone="sky" image={config.images.travelCardImage} alt="Da Nang, Vietnam" />
+            <Link to="/travel" className="home-two-col__media-link" aria-label="Plan your trip — travel info">
+              <Placeholder label="Da Nang, Vietnam" ratio="4/3" tone="sky" image={config.images.travelCardImage} alt="Da Nang, Vietnam" />
+              <span className="home-two-col__media-hint" aria-hidden="true">Plan your trip →</span>
+            </Link>
           </Reveal>
           <Reveal delay={0.1} className="home-two-col__copy">
             <span className="home-eyebrow">Travel & Stay</span>
@@ -93,8 +99,8 @@ export default function Home() {
             <ul className="home-list">
               <li><strong>Fly into:</strong> {config.travel.nearestAirport}</li>
               <li><strong>Distance to venue:</strong> {config.travel.airportDistance}</li>
-              <li><strong>Recommended check-in:</strong> {config.accommodation.checkInDisplay}</li>
-              <li><strong>Recommended check-out:</strong> {config.accommodation.checkOutDisplay}</li>
+              <li><strong>Recommended check-in:</strong> {config.accommodations?.[0]?.checkInDisplay}</li>
+              <li><strong>Recommended check-out:</strong> {config.accommodations?.[0]?.checkOutDisplay}</li>
             </ul>
             <Link to="/travel" className="btn btn--primary">Plan your trip →</Link>
           </Reveal>
@@ -192,6 +198,48 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ─── SET THE MOOD / SPOTIFY ─────────────────────────── */}
+      {(config.music?.spotifyEmbed || config.music?.spotifyUrl) && (
+        <section className="section section--sage">
+          <div className="container home-music">
+            <Reveal>
+              <div className="home-section-head">
+                <span className="home-eyebrow">Set the Mood</span>
+                <h2>Press play</h2>
+                <p className="home-muted">Get in the spirit with our wedding playlist — before, during, and after the celebration.</p>
+              </div>
+            </Reveal>
+            {config.music.spotifyEmbed && (
+              <Reveal delay={0.1}>
+                <div className="home-spotify">
+                  <iframe
+                    src={config.music.spotifyEmbed}
+                    title="Wedding playlist on Spotify"
+                    loading="lazy"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </Reveal>
+            )}
+            {config.music.spotifyUrl && (
+              <Reveal delay={0.15}>
+                <div className="home-section-cta">
+                  <a
+                    href={config.music.spotifyUrl}
+                    className="btn btn--primary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open in Spotify ↗
+                  </a>
+                </div>
+              </Reveal>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   )
 }

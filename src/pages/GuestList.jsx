@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import config from '../config.js'
 import Reveal from '../components/Reveal.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
+import PageGate from '../components/PageGate.jsx'
 import './GuestList.css'
 
 const UNLOCK_KEY = 'tj-guests-unlocked'
@@ -18,9 +19,13 @@ export default function GuestList() {
   }
 
   return (
-    <div className="page guest-page">
-      {unlocked ? <ListContent onLock={() => { sessionStorage.removeItem(UNLOCK_KEY); setUnlocked(false) }} /> : <PasswordGate onUnlock={unlock} />}
-    </div>
+    <PageGate show={config.pages?.guestList !== false} eyebrow="Entourage" title="A private gathering">
+      <div className="page guest-page">
+        {unlocked
+          ? <Entourage onLock={() => { sessionStorage.removeItem(UNLOCK_KEY); setUnlocked(false) }} />
+          : <PasswordGate onUnlock={unlock} />}
+      </div>
+    </PageGate>
   )
 }
 
@@ -46,7 +51,7 @@ function PasswordGate({ onUnlock }) {
       <div className="container guest-shell">
         <Reveal>
           <SectionHeader
-            eyebrow="Guest List"
+            eyebrow="Entourage"
             title="A private gathering"
             subtitle="This page is just for our guests. Please enter the password we shared with your invitation."
           />
@@ -77,7 +82,7 @@ function PasswordGate({ onUnlock }) {
               </button>
             </div>
             {error && <p id="guest-pw-error" className="guest-gate__error">{error}</p>}
-            <button type="submit" className="btn btn--primary guest-gate__submit">Unlock guest list →</button>
+            <button type="submit" className="btn btn--primary guest-gate__submit">Unlock entourage →</button>
             <Link to="/home" className="guest-gate__back">← Back to home</Link>
           </form>
         </Reveal>
@@ -86,142 +91,63 @@ function PasswordGate({ onUnlock }) {
   )
 }
 
-function ListContent({ onLock }) {
-  const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState('all')
-
-  const allGuests = config.guests || []
-  const sections = config.guestSections || []
-
-  /** Counts by section + by RSVP status — recomputed only when guest list changes. */
-  const stats = useMemo(() => {
-    const total = allGuests.length
-    const confirmed = allGuests.filter((g) => g.rsvpStatus === 'confirmed').length
-    const declined = allGuests.filter((g) => g.rsvpStatus === 'declined').length
-    const pending = total - confirmed - declined
-    const bySection = Object.fromEntries(sections.map((s) => [s.id, 0]))
-    allGuests.forEach((g) => { if (g.section in bySection) bySection[g.section] += 1 })
-    return { total, confirmed, declined, pending, bySection }
-  }, [allGuests, sections])
-
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    return allGuests.filter((g) => {
-      if (filter !== 'all' && g.section !== filter) return false
-      if (q && !g.name.toLowerCase().includes(q)) return false
-      return true
-    })
-  }, [allGuests, search, filter])
+/**
+ * Renders the elegant printed-program layout. Each row is either 1 or 2 roles.
+ * On mobile, 2-col rows automatically stack to 1 col for readability.
+ */
+function Entourage({ onLock }) {
+  const rows = config.entourage || []
 
   return (
     <section className="section section--beige">
       <div className="container guest-shell guest-shell--wide">
         <Reveal>
-          <header className="guest-header">
-            <span className="guest-header__eyebrow">Guest List</span>
-            <h1 className="guest-header__title">Our cherished guests</h1>
-            <p className="guest-header__counter">
-              <strong>{stats.confirmed}</strong> of {stats.total} confirmed
-              {stats.declined > 0 && <> · {stats.declined} can't make it</>}
-            </p>
+          <header className="entourage-header">
+            <span className="entourage-header__eyebrow">Entourage</span>
+            <h1 className="entourage-header__couple">{config.couple.displayName}</h1>
+            <p className="entourage-header__sub">The wedding party</p>
+            <div className="entourage-header__divider" aria-hidden="true">
+              <span /><svg viewBox="0 0 24 24"><path d="M12 4 L 14 10 L 20 12 L 14 14 L 12 20 L 10 14 L 4 12 L 10 10 Z" fill="currentColor"/></svg><span />
+            </div>
           </header>
         </Reveal>
 
         <Reveal delay={0.05}>
-          <div className="guest-toolbar">
-            <label className="guest-search" htmlFor="guest-search">
-              <svg viewBox="0 0 20 20" aria-hidden="true">
-                <circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M13.5 13.5 L 17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-              <input
-                id="guest-search"
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by name…"
-              />
-            </label>
-            <button type="button" className="guest-toolbar__lock" onClick={onLock} aria-label="Re-lock the guest list">
+          <div className="entourage-toolbar">
+            <button type="button" className="guest-toolbar__lock" onClick={onLock} aria-label="Re-lock the entourage">
               🔒 Lock
             </button>
           </div>
         </Reveal>
 
-        <Reveal delay={0.1}>
-          <nav className="guest-tabs" aria-label="Filter by section">
-            <button
-              type="button"
-              className={`guest-tab ${filter === 'all' ? 'is-active' : ''}`}
-              onClick={() => setFilter('all')}
-              style={{ '--accent': 'var(--color-navy)' }}
-              aria-pressed={filter === 'all'}
-            >
-              <span className="guest-tab__icon">✨</span>
-              All
-              <span className="guest-tab__count">{stats.total}</span>
-            </button>
-            {sections.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                className={`guest-tab ${filter === s.id ? 'is-active' : ''}`}
-                onClick={() => setFilter(s.id)}
-                style={{ '--accent': s.color }}
-                aria-pressed={filter === s.id}
-              >
-                <span className="guest-tab__icon" aria-hidden="true">{s.icon}</span>
-                {s.label}
-                <span className="guest-tab__count">{stats.bySection[s.id] || 0}</span>
-              </button>
-            ))}
-          </nav>
-        </Reveal>
-
-        {filtered.length === 0 ? (
-          <Reveal delay={0.15}>
-            <div className="guest-empty">
-              {search ? (
-                <>
-                  <p>No guests match <strong>"{search}"</strong>.</p>
-                  <button type="button" className="btn btn--ghost" onClick={() => setSearch('')}>Clear search</button>
-                </>
-              ) : (
-                <p>No guests in this section yet.</p>
-              )}
-            </div>
-          </Reveal>
+        {rows.length > 0 ? (
+          <ol className="entourage" role="list">
+            {rows.map((row, i) => {
+              const cols = (row?.length === 1) ? 'one' : 'two'
+              return (
+                <Reveal as="li" key={i} delay={Math.min(i * 0.04, 0.25)}>
+                  <div className={`entourage-row entourage-row--${cols}`}>
+                    {row.map((role, j) => (
+                      <div className="entourage-role" key={`${role.label}-${j}`}>
+                        <h2 className="entourage-role__label">{role.label}</h2>
+                        <ul className="entourage-role__names" role="list">
+                          {(role.names || []).map((name, k) => (
+                            <li key={k}>{name}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </Reveal>
+              )
+            })}
+          </ol>
         ) : (
-          <ul className="guest-list" role="list">
-            {filtered.map((g, i) => (
-              <GuestCard key={`${g.name}-${i}`} guest={g} sections={sections} delay={Math.min(i * 0.02, 0.3)} />
-            ))}
-          </ul>
+          <Reveal>
+            <p className="entourage-empty">The entourage will be shared here soon. 💛</p>
+          </Reveal>
         )}
       </div>
     </section>
-  )
-}
-
-function GuestCard({ guest, sections, delay }) {
-  const section = sections.find((s) => s.id === guest.section)
-  const status = guest.rsvpStatus || 'pending'
-  return (
-    <Reveal as="li" delay={delay}>
-      <article className={`guest-card guest-card--${status}`}>
-        <div className="guest-card__main">
-          <h3 className="guest-card__name">{guest.name}</h3>
-          {section && (
-            <span className="guest-card__section" style={{ '--badge': section.color }}>
-              <span aria-hidden="true">{section.icon}</span> {section.label}
-            </span>
-          )}
-        </div>
-        <span className={`guest-card__status guest-card__status--${status}`} aria-label={`RSVP ${status}`}>
-          <span className="guest-card__dot" aria-hidden="true" />
-          {status === 'confirmed' ? 'Confirmed' : status === 'declined' ? 'Declined' : 'Pending'}
-        </span>
-      </article>
-    </Reveal>
   )
 }

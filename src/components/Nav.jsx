@@ -11,7 +11,7 @@ const links = [
   { to: '/dress-code', label: 'Dress Code' },
   { to: '/gallery', label: 'Gallery' },
   { to: '/reminders', label: 'Reminders' },
-  { to: '/guest-list', label: 'Guest List' },
+  { to: '/entourage', label: 'Entourage' },
   { to: '/rsvp', label: 'RSVP' },
 ]
 

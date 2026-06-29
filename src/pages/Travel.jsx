@@ -3,12 +3,14 @@ import config from '../config.js'
 import Reveal from '../components/Reveal.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Placeholder from '../components/Placeholder.jsx'
+import PageGate from '../components/PageGate.jsx'
 import './Travel.css'
 
 export default function Travel() {
   const travel = config.travel || {}
-  const accommodation = config.accommodation || {}
+  const hotels = config.accommodations || []
   const venueMapsUrl = config.venue?.googleMapsUrl
+  const fallbackImage = config.images?.venueCardImage || ''
 
   const tips = [
     travel.currency && { icon: '💵', title: 'Currency', body: travel.currency },
@@ -18,6 +20,7 @@ export default function Travel() {
   ].filter(Boolean)
 
   return (
+    <PageGate show={config.pages?.travel !== false} eyebrow="Travel & Stay" title="Getting to Đà Nẵng">
     <div className="page travel-page">
       {/* ─── HERO ───────────────────────────────────────── */}
       <section className="section section--beige travel-hero">
@@ -83,66 +86,102 @@ export default function Travel() {
           <Reveal>
             <div className="travel-section-head">
               <span className="travel-eyebrow">Where to Stay</span>
-              <h2>Recommended accommodation</h2>
+              <h2>{hotels.length > 1 ? 'Recommended accommodations' : 'Recommended accommodation'}</h2>
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
-            <article className="travel-hotel">
-              <div className="travel-hotel__media">
+
+          <div className="travel-hotels">
+            {hotels.map((hotel, i) => {
+              const photoImage = hotel.image || fallbackImage
+              const photoMedia = (
                 <Placeholder
                   ratio="4/3"
                   tone="sage"
                   label="Hotel photo coming soon"
-                  image={config.images?.venueCardImage || ''}
-                  alt={accommodation.hotelName}
+                  image={photoImage}
+                  alt={hotel.name}
                 />
-              </div>
-              <div className="travel-hotel__body">
-                <span className="travel-hotel__featured">⭐ Featured · Wedding Venue</span>
-                <h3 className="travel-hotel__name">{accommodation.hotelName || config.venue?.name}</h3>
-                {(accommodation.checkInDisplay || accommodation.checkOutDisplay) && (
-                  <ul className="travel-hotel__dates">
-                    {accommodation.checkInDisplay && (
-                      <li><strong>Check-in</strong><span>{accommodation.checkInDisplay}</span></li>
-                    )}
-                    {accommodation.checkOutDisplay && (
-                      <li><strong>Check-out</strong><span>{accommodation.checkOutDisplay}</span></li>
-                    )}
-                  </ul>
-                )}
-                {accommodation.notes && <p className="travel-hotel__notes">{accommodation.notes}</p>}
-                {accommodation.bookingDetails && (
-                  <p className="travel-hotel__booking">{accommodation.bookingDetails}</p>
-                )}
-                <div className="travel-hotel__actions">
-                  {accommodation.bookingUrl ? (
-                    <a
-                      href={accommodation.bookingUrl}
-                      className="btn btn--primary"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Book your room ↗
-                    </a>
-                  ) : (
-                    <button type="button" className="btn btn--primary" disabled aria-disabled="true">
-                      Booking link coming soon
-                    </button>
-                  )}
-                  {venueMapsUrl && (
-                    <a
-                      href={venueMapsUrl}
-                      className="btn btn--ghost"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View on map ↗
-                    </a>
-                  )}
-                </div>
-              </div>
-            </article>
-          </Reveal>
+              )
+              const hotelMapsUrl = hotel.mapsUrl || (hotel.featured ? venueMapsUrl : '')
+
+              return (
+                <Reveal key={hotel.name || i} delay={Math.min(0.1 + i * 0.05, 0.3)}>
+                  <article className="travel-hotel">
+                    <div className="travel-hotel__media">
+                      {hotel.websiteUrl ? (
+                        <a
+                          href={hotel.websiteUrl}
+                          className="travel-hotel__photo-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Visit ${hotel.name} website`}
+                        >
+                          {photoMedia}
+                          <span className="travel-hotel__photo-hint" aria-hidden="true">
+                            Visit website ↗
+                          </span>
+                        </a>
+                      ) : (
+                        photoMedia
+                      )}
+                    </div>
+                    <div className="travel-hotel__body">
+                      {hotel.featured && (
+                        <span className="travel-hotel__featured">⭐ Featured · Wedding Venue</span>
+                      )}
+                      <h3 className="travel-hotel__name">{hotel.name}</h3>
+                      {(hotel.checkInDisplay || hotel.checkOutDisplay) && (
+                        <ul className="travel-hotel__dates">
+                          {hotel.checkInDisplay && (
+                            <li><strong>Check-in</strong><span>{hotel.checkInDisplay}</span></li>
+                          )}
+                          {hotel.checkOutDisplay && (
+                            <li><strong>Check-out</strong><span>{hotel.checkOutDisplay}</span></li>
+                          )}
+                        </ul>
+                      )}
+                      {hotel.notes && <p className="travel-hotel__notes">{hotel.notes}</p>}
+                      {hotel.bookingDetails && (
+                        <p className="travel-hotel__booking">{hotel.bookingDetails}</p>
+                      )}
+                      <div className="travel-hotel__actions">
+                        {hotel.bookingUrl ? (
+                          <a
+                            href={hotel.bookingUrl}
+                            className="btn btn--primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Book your room ↗
+                          </a>
+                        ) : (
+                          <button type="button" className="btn btn--primary" disabled aria-disabled="true">
+                            Booking link coming soon
+                          </button>
+                        )}
+                        {hotelMapsUrl && (
+                          <a
+                            href={hotelMapsUrl}
+                            className="btn btn--ghost"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            View on map ↗
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                </Reveal>
+              )
+            })}
+
+            {hotels.length === 0 && (
+              <Reveal>
+                <p className="travel-hotels-empty">More accommodation details coming soon. 💛</p>
+              </Reveal>
+            )}
+          </div>
         </div>
       </section>
 
@@ -189,5 +228,6 @@ export default function Travel() {
         </section>
       )}
     </div>
+    </PageGate>
   )
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import config from '../config.js'
 import Reveal from '../components/Reveal.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
+import PageGate from '../components/PageGate.jsx'
 import './Timeline.css'
 
 export default function Timeline() {
@@ -9,6 +10,7 @@ export default function Timeline() {
   const preEvents = config.preWeddingEvents || []
 
   return (
+    <PageGate show={config.pages?.timeline !== false} eyebrow="The Big Day" title="Wedding day timeline">
     <div className="page timeline-page">
       {/* ─── HERO ─── */}
       <section className="section section--beige">
@@ -80,6 +82,7 @@ export default function Timeline() {
         </section>
       )}
     </div>
+    </PageGate>
   )
 }
 

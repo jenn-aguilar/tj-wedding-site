@@ -217,6 +217,63 @@
 .home-two-col__copy h2 { margin-top: 0; }
 .home-two-col__copy .btn { margin-top: var(--sp-3); }
 
+/* Clickable photo wrapper — links to the dedicated page */
+.home-two-col__media-link {
+  display: block;
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.home-two-col__media-link:hover,
+.home-two-col__media-link:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.home-two-col__media-link:focus-visible {
+  outline: 3px solid var(--color-sage);
+  outline-offset: 3px;
+}
+.home-two-col__media-link .placeholder {
+  transition: transform 0.45s var(--ease-soft);
+}
+.home-two-col__media-link:hover .placeholder,
+.home-two-col__media-link:focus-visible .placeholder {
+  transform: scale(1.04);
+}
+
+.home-two-col__media-hint {
+  position: absolute;
+  bottom: var(--sp-3);
+  left: var(--sp-3);
+  background: rgba(30, 58, 95, 0.85);
+  color: var(--color-beige);
+  padding: 0.45em 0.95em;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity var(--dur-fast) var(--ease-soft), transform var(--dur-fast) var(--ease-soft);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+  z-index: 2;
+}
+.home-two-col__media-link:hover .home-two-col__media-hint,
+.home-two-col__media-link:focus-visible .home-two-col__media-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Touch devices — show the hint permanently since there's no hover */
+@media (hover: none) and (pointer: coarse) {
+  .home-two-col__media-hint { opacity: 1; transform: none; }
+}
+
 /* ─── AT A GLANCE ───────────────────────────────────────────────── */
 .home-glance {
   display: grid;
@@ -332,3 +389,21 @@
   margin: 0 0 var(--sp-2);
 }
 .home-reminders__card p { font-size: var(--fs-sm); color: var(--color-text-soft); margin: 0; }
+
+/* ─── Spotify "Set the Mood" section ─────────────────────────────── */
+.home-music { max-width: 880px; }
+
+.home-spotify {
+  max-width: 720px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: #1A1A1A;
+}
+.home-spotify iframe {
+  width: 100%;
+  height: 380px;
+  border: 0;
+  display: block;
+}
