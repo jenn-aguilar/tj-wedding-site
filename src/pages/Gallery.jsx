@@ -3,6 +3,7 @@ import config from '../config.js'
 import Reveal from '../components/Reveal.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Lightbox from '../components/Lightbox.jsx'
+import PageGate from '../components/PageGate.jsx'
 import './Gallery.css'
 
 export default function Gallery() {
@@ -15,6 +16,7 @@ export default function Gallery() {
   const next = useCallback(() => setOpenIdx((i) => (i === null ? null : (i + 1) % photos.length)), [photos.length])
 
   return (
+    <PageGate show={config.pages?.gallery !== false} eyebrow="Our Story" title="A few moments along the way">
     <div className="page gallery-page">
       {/* ─── HERO + OUR STORY ─── */}
       <section className="section section--beige">
@@ -84,5 +86,6 @@ export default function Gallery() {
         onNext={next}
       />
     </div>
+    </PageGate>
   )
 }
