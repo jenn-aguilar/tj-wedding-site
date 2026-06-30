@@ -116,7 +116,10 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--sp-4);
-  max-width: 720px;
+  max-width: 880px;
+  /* Let each card size to its own photo — no forced equal-height row.
+     A portrait card next to a landscape card just sits at its natural height. */
+  align-items: start;
 }
 @media (min-width: 560px) {
   .dress-samples-grid { grid-template-columns: 1fr 1fr; }
@@ -133,15 +136,26 @@
 }
 .dress-sample-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 
-.dress-sample-card img,
-.dress-sample-card .placeholder {
+/* Real photos: display at their NATURAL aspect ratio — no crop.
+   Whether the upload is portrait, landscape, or square, the card grows
+   with the image. */
+.dress-sample-card img {
   width: 100%;
   height: auto;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
   display: block;
   border-radius: 0;
   box-shadow: none;
+}
+
+/* Placeholders (when no photo is set yet) still get a portrait ratio
+   so the empty state looks intentional. Override removes any conflicting
+   inline aspect-ratio from the Placeholder component itself. */
+.dress-sample-card .placeholder {
+  width: 100%;
+  display: block;
+  border-radius: 0;
+  box-shadow: none;
+  aspect-ratio: 3 / 4 !important;
 }
 
 .dress-sample-card figcaption {

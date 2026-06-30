@@ -192,7 +192,7 @@ export default function Venue() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {moreLabel}
+                  {moreLabel} ↗
                 </a>
                 <p>For the full collection of photos and videos.</p>
               </div>

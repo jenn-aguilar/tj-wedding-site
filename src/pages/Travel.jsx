@@ -60,10 +60,15 @@ export default function Travel() {
               </article>
             </Reveal>
             <Reveal delay={0.15}>
-              <article className="travel-card">
+              <article className="travel-card travel-card--visa">
                 <span className="travel-card__icon" aria-hidden="true">🛂</span>
-                <h3>Visa</h3>
-                {travel.visaInfo && <p>{travel.visaInfo}</p>}
+                <h3>Visa & Entry</h3>
+                {(travel.visaParagraphs?.length
+                  ? travel.visaParagraphs
+                  : (travel.visaInfo ? [travel.visaInfo] : [])
+                ).map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
                 {travel.visaUrl && (
                   <a
                     href={travel.visaUrl}
@@ -71,7 +76,7 @@ export default function Travel() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Official Vietnam e-Visa site ↗
+                    {travel.visaUrlLabel || 'Official Vietnam e-Visa portal ↗'}
                   </a>
                 )}
               </article>
