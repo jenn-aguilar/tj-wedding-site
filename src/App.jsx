@@ -15,6 +15,7 @@ import DressCode from './pages/DressCode.jsx'
 import Reminders from './pages/Reminders.jsx'
 import Gallery from './pages/Gallery.jsx'
 import Venue from './pages/Venue.jsx'
+import Registry from './pages/Registry.jsx'
 import config from './config.js'
 
 function ScrollToTop() {
@@ -61,6 +62,7 @@ export default function App() {
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/venue" element={<Venue />} />
+        <Route path="/registry" element={<Registry />} />
         <Route path="*" element={<Home />} />
       </Routes>
       {showBackToTop && <BackToTop />}
