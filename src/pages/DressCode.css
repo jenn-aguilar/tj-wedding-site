@@ -147,6 +147,63 @@
   box-shadow: none;
 }
 
+/* Clickable photo button — wraps the img and opens the lightbox */
+.dress-sample-card__photo-btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+.dress-sample-card__photo-btn img {
+  transition: transform 0.45s var(--ease-soft);
+}
+.dress-sample-card__photo-btn:hover img,
+.dress-sample-card__photo-btn:focus-visible img {
+  transform: scale(1.03);
+}
+.dress-sample-card__photo-btn:focus-visible {
+  outline: 3px solid var(--color-sage);
+  outline-offset: -3px;
+}
+
+/* Magnifying-glass zoom badge that appears on hover/focus */
+.dress-sample-card__zoom {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--sp-3);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(30, 58, 95, 0.78);
+  color: var(--color-beige);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity var(--dur-fast) var(--ease-soft), transform var(--dur-fast) var(--ease-soft);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+  z-index: 2;
+}
+.dress-sample-card__photo-btn:hover .dress-sample-card__zoom,
+.dress-sample-card__photo-btn:focus-visible .dress-sample-card__zoom {
+  opacity: 1;
+  transform: scale(1);
+}
+.dress-sample-card__zoom svg { width: 20px; height: 20px; }
+
+/* Touch devices — keep the zoom badge visible since there's no hover */
+@media (hover: none) and (pointer: coarse) {
+  .dress-sample-card__zoom { opacity: 1; transform: scale(1); }
+}
+
 /* Placeholders (when no photo is set yet) still get a portrait ratio
    so the empty state looks intentional. Override removes any conflicting
    inline aspect-ratio from the Placeholder component itself. */

@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import config from '../config.js'
 import Reveal from '../components/Reveal.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Placeholder from '../components/Placeholder.jsx'
+import Lightbox from '../components/Lightbox.jsx'
 import PageGate from '../components/PageGate.jsx'
 import './DressCode.css'
 
@@ -11,6 +12,26 @@ export default function DressCode() {
   const palette = dress.palette || []
   const paletteNames = dress.paletteNames || []
   const samples = dress.samples
+  const samplePhotos = (samples?.photos || []).filter((p) => p?.src)
+
+  const [openIdx, setOpenIdx] = useState(null)
+  const closeLightbox = useCallback(() => setOpenIdx(null), [])
+  const prevPhoto = useCallback(
+    () => setOpenIdx((i) => (i === null ? null : (i - 1 + samplePhotos.length) % samplePhotos.length)),
+    [samplePhotos.length]
+  )
+  const nextPhoto = useCallback(
+    () => setOpenIdx((i) => (i === null ? null : (i + 1) % samplePhotos.length)),
+    [samplePhotos.length]
+  )
+
+  /** Maps a photo's position in the FULL list to its position in the
+   *  src-only list (which is what Lightbox sees). Returns -1 if no src. */
+  const lightboxIdxFor = (fullIdx) => {
+    const p = samples?.photos?.[fullIdx]
+    if (!p?.src) return -1
+    return samplePhotos.findIndex((sp) => sp.src === p.src)
+  }
 
   return (
     <PageGate show={config.pages?.dressCode !== false} eyebrow="Dress Code" title={dress.label}>
@@ -39,7 +60,7 @@ export default function DressCode() {
           <Reveal>
             <div className="dress-section-head">
               <span className="dress-eyebrow">Our Palette</span>
-              <h2>Inspired by the sea, sky, and sand</h2>
+              <h2>Sea, sky, and earth tones</h2>
             </div>
           </Reveal>
           <ul className="dress-palette" role="list">
@@ -80,22 +101,38 @@ export default function DressCode() {
               </div>
             </Reveal>
             <ul className="dress-samples-grid" role="list">
-              {(samples.photos || []).map((p, i) => (
-                <Reveal as="li" key={(p.src || p.caption || i)} delay={Math.min(i * 0.05, 0.2)}>
-                  <figure className="dress-sample-card">
-                    {p.src ? (
-                      <img
-                        src={p.src}
-                        alt={p.alt || p.caption || 'Outfit inspiration'}
-                        loading="lazy"
-                      />
-                    ) : (
-                      <Placeholder ratio="3/4" tone="sage" label="Photo coming soon" />
-                    )}
-                    {p.caption && <figcaption>{p.caption}</figcaption>}
-                  </figure>
-                </Reveal>
-              ))}
+              {(samples.photos || []).map((p, i) => {
+                const lbIdx = lightboxIdxFor(i)
+                return (
+                  <Reveal as="li" key={(p.src || p.caption || i)} delay={Math.min(i * 0.05, 0.2)}>
+                    <figure className="dress-sample-card">
+                      {p.src ? (
+                        <button
+                          type="button"
+                          className="dress-sample-card__photo-btn"
+                          onClick={() => setOpenIdx(lbIdx)}
+                          aria-label={`Open photo${p.caption ? `: ${p.caption}` : ''}`}
+                        >
+                          <img
+                            src={p.src}
+                            alt={p.alt || p.caption || 'Outfit inspiration'}
+                            loading="lazy"
+                          />
+                          <span className="dress-sample-card__zoom" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                              <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                              <path d="M16 16 L 21 21 M 8 11 L 14 11 M 11 8 L 11 14" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round"/>
+                            </svg>
+                          </span>
+                        </button>
+                      ) : (
+                        <Placeholder ratio="3/4" tone="sage" label="Photo coming soon" />
+                      )}
+                      {p.caption && <figcaption>{p.caption}</figcaption>}
+                    </figure>
+                  </Reveal>
+                )
+              })}
             </ul>
 
             {samples.avoidNote && (
@@ -109,6 +146,14 @@ export default function DressCode() {
           </div>
         </section>
       )}
+
+      <Lightbox
+        photos={samplePhotos}
+        index={openIdx}
+        onClose={closeLightbox}
+        onPrev={prevPhoto}
+        onNext={nextPhoto}
+      />
     </div>
     </PageGate>
   )
