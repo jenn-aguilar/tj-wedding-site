@@ -12,8 +12,8 @@ export default function Timeline() {
   return (
     <PageGate show={config.pages?.timeline !== false} eyebrow="The Big Day" title="Wedding day timeline">
     <div className="page timeline-page">
-      {/* ─── HERO ─── */}
-      <section className="section section--beige">
+      {/* ─── HERO + TIMELINE ─── */}
+      <section className="section section--beige timeline-section">
         <div className="container">
           <Reveal>
             <SectionHeader
@@ -22,12 +22,6 @@ export default function Timeline() {
               subtitle={`A full walkthrough of every moment on ${config.wedding.displayDate}.`}
             />
           </Reveal>
-        </div>
-      </section>
-
-      {/* ─── TIMELINE ─── */}
-      <section className="section section--beige timeline-section">
-        <div className="container">
           <ol className="timeline" role="list">
             {timeline.map((item, i) => (
               <TimelineItem
