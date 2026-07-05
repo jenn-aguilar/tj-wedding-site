@@ -1,6 +1,12 @@
 /* ─── Venue page — mobile-first ─────────────────────────── */
 .venue-page { min-height: 100vh; padding-top: 0; }
 
+/* Sections after the hero sit closer together than the site default. */
+.venue-page .section { padding: var(--sp-9) 0; }
+@media (max-width: 720px) {
+  .venue-page .section { padding: var(--sp-7) 0; }
+}
+
 /* ─── HERO ─── */
 .venue-hero {
   position: relative;
@@ -223,7 +229,7 @@
 }
 
 /* ─── Map ─── */
-.venue-map-section { padding-bottom: var(--sp-10); }
+.venue-map-section { padding-bottom: var(--sp-9); }
 
 .venue-map {
   max-width: 960px;

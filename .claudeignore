@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Build output
+/dist/
+/build/
+/.vite/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+docs/historical/
+specs/wip
+*~
+
+# Test / coverage outputs
+coverage/
+
+# Temporary files
+.tmp/
+.tmp*
+tmp/
+
+# Package manager lockfiles (optional, if you prefer not to track them)
+# package-lock.json
+yarn.lock
+pnpm-lock.yaml

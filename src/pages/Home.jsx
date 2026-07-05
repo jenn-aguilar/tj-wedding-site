@@ -147,9 +147,10 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.1} className="home-palette">
             {config.dressCode.palette.map((hex, i) => (
-              <div className="home-palette__swatch" key={hex} style={{ background: hex }}>
-                <span>{config.dressCode.paletteNames[i]}</span>
-                <code>{hex}</code>
+              <div className="home-palette__swatch" key={hex + i}>
+                <div className="home-palette__circle" style={{ background: hex }} aria-hidden="true" />
+                <span className="home-palette__name">{config.dressCode.paletteNames[i]}</span>
+                <code className="home-palette__hex">{String(hex).toUpperCase()}</code>
               </div>
             ))}
           </Reveal>

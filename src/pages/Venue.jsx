@@ -88,44 +88,6 @@ export default function Venue() {
         </div>
       </section>
 
-      {/* ─── AMENITIES ──────────────────────────────────── */}
-      {venue.amenities?.length > 0 && (
-        <section className="section section--sage">
-          <div className="container">
-            <Reveal>
-              <div className="venue-section-head">
-                <span className="venue-eyebrow">Amenities</span>
-                <h2>What you'll find here</h2>
-              </div>
-            </Reveal>
-            <ul className="venue-amenities" role="list">
-              {venue.amenities.map((a, i) => (
-                <Reveal as="li" delay={Math.min(i * 0.05, 0.25)} key={a.label}>
-                  <span className="venue-amenities__icon" aria-hidden="true">{a.icon}</span>
-                  <span className="venue-amenities__label">{a.label}</span>
-                </Reveal>
-              ))}
-            </ul>
-            {venue.ratesPdfUrl && (
-              <Reveal delay={0.25}>
-                <div className="venue-amenities__cta">
-                  <a
-                    href={venue.ratesPdfUrl}
-                    className="btn btn--primary"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className="venue-amenities__cta-icon" aria-hidden="true">📄</span>
-                    {venue.ratesLabel || 'View room & villa rates (PDF)'} ↗
-                  </a>
-                  {/* <p className="venue-amenities__cta-note">Opens in a new tab.</p> */}
-                </div>
-              </Reveal>
-            )}
-          </div>
-        </section>
-      )}
-
       {/* ─── VIDEO TOUR (optional) ──────────────────────── */}
       {youtubeEmbed && (
         <section className="section section--beige venue-video-section">
@@ -208,6 +170,44 @@ export default function Venue() {
           onNext={nextPhoto}
         />
       </section>
+
+      {/* ─── AMENITIES ──────────────────────────────────── */}
+      {venue.amenities?.length > 0 && (
+        <section className="section section--sage">
+          <div className="container">
+            <Reveal>
+              <div className="venue-section-head">
+                <span className="venue-eyebrow">Amenities</span>
+                <h2>What you'll find here</h2>
+              </div>
+            </Reveal>
+            <ul className="venue-amenities" role="list">
+              {venue.amenities.map((a, i) => (
+                <Reveal as="li" delay={Math.min(i * 0.05, 0.25)} key={a.label}>
+                  <span className="venue-amenities__icon" aria-hidden="true">{a.icon}</span>
+                  <span className="venue-amenities__label">{a.label}</span>
+                </Reveal>
+              ))}
+            </ul>
+            {venue.ratesPdfUrl && (
+              <Reveal delay={0.25}>
+                <div className="venue-amenities__cta">
+                  <a
+                    href={venue.ratesPdfUrl}
+                    className="btn btn--primary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="venue-amenities__cta-icon" aria-hidden="true">📄</span>
+                    {venue.ratesLabel || 'View room & villa rates (PDF)'} ↗
+                  </a>
+                  {/* <p className="venue-amenities__cta-note">Opens in a new tab.</p> */}
+                </div>
+              </Reveal>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ─── MAP ────────────────────────────────────────── */}
       <section className="section section--beige venue-map-section">

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import LazyImage from './LazyImage.jsx'
 import './PhotoCarousel.css'
 
 /**
@@ -96,11 +97,12 @@ export default function PhotoCarousel({ photos = [], onPhotoClick, ratio = '4/3'
                 className={`carousel__figure ${isInteractive ? 'is-interactive' : ''}`}
                 style={{ aspectRatio: ratio }}
               >
-                <img
+                <LazyImage
                   src={photo.src}
                   alt={photo.alt || photo.caption || `Photo ${i + 1}`}
                   loading={i < 2 ? 'eager' : 'lazy'}
-                  draggable="false"
+                  fetchpriority={i === 0 ? 'high' : undefined}
+                  fill
                 />
                 {photo.caption && <span className="carousel__caption">{photo.caption}</span>}
               </Wrap>
@@ -123,18 +125,22 @@ export default function PhotoCarousel({ photos = [], onPhotoClick, ratio = '4/3'
 
       {photos.length > 1 && (
         <ol className="carousel__dots" role="tablist" aria-label="Choose photo">
-          {photos.map((_, i) => (
-            <li key={i}>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={i === activeIdx}
-                aria-label={`Go to photo ${i + 1}`}
-                className={`carousel__dot ${i === activeIdx ? 'is-active' : ''}`}
-                onClick={() => scrollTo(i)}
-              />
-            </li>
-          ))}
+          {Array.from({ length: Math.ceil(photos.length / 3) }, (_, i) => {
+            const groupStart = i * 3
+            const isActive = Math.floor(activeIdx / 3) === i
+            return (
+              <li key={i}>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={`Go to photos ${groupStart + 1}-${Math.min(groupStart + 3, photos.length)}`}
+                  className={`carousel__dot ${isActive ? 'is-active' : ''}`}
+                  onClick={() => scrollTo(groupStart)}
+                />
+              </li>
+            )
+          })}
         </ol>
       )}
     </div>

@@ -1,7 +1,6 @@
 /* ─── Timeline page — mobile-first ─────────────────────────── */
 .timeline-page { min-height: 100vh; }
 
-.timeline-section { padding-top: 0; }
 
 .timeline-eyebrow {
   display: block;

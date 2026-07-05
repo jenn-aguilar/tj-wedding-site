@@ -1,0 +1,51 @@
+.lazy-img {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.lazy-img--fill { height: 100%; }
+.lazy-img--fill .lazy-img__img { height: 100%; }
+
+.lazy-img__img {
+  display: block;
+  width: 100%;
+}
+.lazy-img--natural .lazy-img__img { height: auto; }
+
+.lazy-img__img.is-loading { opacity: 0; }
+.lazy-img__img.is-loaded {
+  opacity: 1;
+  transition: opacity 0.5s var(--ease-soft);
+}
+
+.lazy-img__skeleton {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  background: linear-gradient(100deg, rgba(168, 201, 220, 0.28) 25%, rgba(255, 255, 255, 0.75) 50%, rgba(168, 201, 220, 0.28) 75%);
+  background-size: 200% 100%;
+  animation: lazy-img-shimmer 1.5s ease-in-out infinite;
+}
+@keyframes lazy-img-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.lazy-img__skeleton--error {
+  animation: none;
+  background: rgba(30, 58, 95, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lazy-img__error-icon {
+  width: 28px;
+  height: 28px;
+  color: rgba(30, 58, 95, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lazy-img__skeleton { animation: none; }
+  .lazy-img__img.is-loaded { transition: none; }
+}

@@ -4,6 +4,7 @@ import Reveal from '../components/Reveal.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import Lightbox from '../components/Lightbox.jsx'
 import PageGate from '../components/PageGate.jsx'
+import LazyImage from '../components/LazyImage.jsx'
 import './Gallery.css'
 
 export default function Gallery() {
@@ -51,10 +52,12 @@ export default function Gallery() {
                     onClick={() => setOpenIdx(i)}
                     aria-label={`Open photo: ${photo.caption || photo.alt || `${i + 1}`}`}
                   >
-                    <img
+                    <LazyImage
                       src={photo.src}
                       alt={photo.alt || photo.caption || `Pre-wedding photo ${i + 1}`}
-                      loading="lazy"
+                      loading={i < 2 ? 'eager' : 'lazy'}
+                      fetchpriority={i === 0 ? 'high' : undefined}
+                      placeholderRatio="3/4"
                     />
                     {photo.caption && (
                       <span className="gallery-tile__caption">{photo.caption}</span>
