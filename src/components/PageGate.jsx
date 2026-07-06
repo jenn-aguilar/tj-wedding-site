@@ -10,8 +10,11 @@ import './PageGate.css'
  *
  * `eyebrow` and `title` preserve the page's identity in the placeholder state
  * (e.g. "The Venue · Mikazuki Resorts Da Nang").
+ *
+ * `note`, if given, appears just below the "please check back closer to the
+ * day" subtitle — e.g. the RSVP page uses it to still surface the deadline.
  */
-export default function PageGate({ show = true, eyebrow, title, children }) {
+export default function PageGate({ show = true, eyebrow, title, note, children }) {
   if (show) return children
 
   return (
@@ -25,6 +28,11 @@ export default function PageGate({ show = true, eyebrow, title, children }) {
               subtitle="This page is being prepared with love — please check back closer to the day."
             />
           </Reveal>
+          {note && (
+            <Reveal delay={0.05}>
+              <p className="page-gate__note">{note}</p>
+            </Reveal>
+          )}
           <Reveal delay={0.1}>
             <div className="page-gate__panel">
               <span className="page-gate__icon" aria-hidden="true">⏳</span>

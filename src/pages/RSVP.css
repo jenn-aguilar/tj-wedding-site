@@ -19,6 +19,22 @@
 .rsvp-card--closed { gap: var(--sp-5); text-align: center; align-items: center; }
 .rsvp-card--closed p { color: var(--color-text-soft); max-width: 50ch; }
 
+/* Optional description under the hero, above the form/button */
+.rsvp-description {
+  max-width: 56ch;
+  margin: calc(var(--sp-7) * -1) auto var(--sp-5);
+  text-align: center;
+  color: var(--color-text-soft);
+  font-size: var(--fs-md);
+  line-height: 1.6;
+}
+
+/* External RSVP mode — hero + description + a single button */
+.rsvp-card--external {
+  align-items: center;
+  text-align: center;
+}
+
 /* ─── Rows ─── */
 .rsvp-row { display: grid; gap: var(--sp-4); }
 .rsvp-row--two { grid-template-columns: 1fr; }

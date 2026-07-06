@@ -2,6 +2,14 @@
 
 .page-gate { max-width: 720px; }
 
+.page-gate__note {
+  max-width: 48ch;
+  margin: calc(var(--sp-7) * -1) auto var(--sp-6);
+  text-align: center;
+  color: var(--color-text-soft);
+  font-size: var(--fs-md);
+}
+
 .page-gate__panel {
   max-width: 520px;
   margin: 0 auto;
