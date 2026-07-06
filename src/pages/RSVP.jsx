@@ -56,10 +56,58 @@ export default function RSVP() {
     return Date.now() > d.getTime()
   }, [])
 
+  const isExternal = config.rsvp?.mode === 'external'
+
   return (
-    <PageGate show={config.pages?.rsvp !== false} eyebrow="RSVP" title="Reply with love">
-      {deadlinePast ? <DeadlinePassed /> : <RsvpForm />}
+    <PageGate
+      show={config.pages?.rsvp !== false}
+      eyebrow="RSVP"
+      title="Reply with love"
+      note={`Please note our RSVP deadline is ${config.wedding.rsvpDeadlineDisplay}.`}
+    >
+      {isExternal ? <ExternalRsvp /> : deadlinePast ? <DeadlinePassed /> : <RsvpForm />}
     </PageGate>
+  )
+}
+
+/** Shown under the "Reply with love" hero when `config.rsvp.description` is set. */
+function RsvpDescription() {
+  const description = config.rsvp?.description
+  if (!description) return null
+  return <p className="rsvp-description">{description}</p>
+}
+
+/** `config.rsvp.mode === 'external'` — sends guests to an outside RSVP manager
+    (The Knot, Zola, With Joy, etc) instead of the built-in form. */
+function ExternalRsvp() {
+  const { externalUrl, externalLabel } = config.rsvp || {}
+
+  return (
+    <div className="page rsvp-page">
+      <section className="section section--beige">
+        <div className="container rsvp-shell">
+          <Reveal>
+            <SectionHeader eyebrow="RSVP" title="Reply with love" subtitle={`Please let us know by ${config.wedding.rsvpDeadlineDisplay}.`} />
+          </Reveal>
+          <Reveal delay={0.05}>
+            <RsvpDescription />
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div className="rsvp-card rsvp-card--external">
+              {externalUrl ? (
+                <a href={externalUrl} className="btn btn--primary rsvp-submit" target="_blank" rel="noopener noreferrer">
+                  {externalLabel || 'RSVP ↗'}
+                </a>
+              ) : (
+                <button type="button" className="btn btn--primary rsvp-submit" disabled aria-disabled="true">
+                  RSVP link coming soon
+                </button>
+              )}
+            </div>
+          </Reveal>
+        </div>
+      </section>
+    </div>
   )
 }
 
@@ -176,6 +224,10 @@ function RsvpForm() {
         <div className="container rsvp-shell">
           <Reveal>
             <SectionHeader eyebrow="RSVP" title="Reply with love" subtitle={`Please let us know by ${config.wedding.rsvpDeadlineDisplay}.`} />
+          </Reveal>
+
+          <Reveal delay={0.05}>
+            <RsvpDescription />
           </Reveal>
 
           <Reveal delay={0.1}>
