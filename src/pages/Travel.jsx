@@ -11,6 +11,7 @@ export default function Travel() {
   const hotels = config.accommodations || []
   const venueMapsUrl = config.venue?.googleMapsUrl
   const fallbackImage = config.images?.venueCardImage || ''
+  const heroImage = travel.heroImage || config.images?.travelHeroImage || ''
 
   const tips = [
     travel.currency && { icon: '💵', title: 'Currency', body: travel.currency },
@@ -23,13 +24,16 @@ export default function Travel() {
     <PageGate show={config.pages?.travel !== false} eyebrow="Travel & Stay" title="Getting to Đà Nẵng">
     <div className="page travel-page">
       {/* ─── HERO ───────────────────────────────────────── */}
-      <section className="section section--beige travel-hero">
+      <section className={`section section--beige travel-hero ${heroImage ? 'travel-hero--photo' : ''}`}>
+        {heroImage && <img className="travel-hero__img" src={heroImage} alt="" />}
+        {heroImage && <div className="travel-hero__overlay" aria-hidden="true" />}
         <div className="container">
           <Reveal>
             <SectionHeader
               eyebrow="Travel & Stay"
               title="Getting to Đà Nẵng"
               subtitle="Everything you need to know to plan your trip to Vietnam — flights, accommodation, and a few tips for the road."
+              tone={heroImage ? 'light' : 'dark'}
             />
           </Reveal>
         </div>

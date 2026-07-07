@@ -7,9 +7,25 @@
     <meta name="robots" content="noindex,nofollow" />
     <meta name="theme-color" content="#F5EFE6" />
 
-    <!-- SEO (overridden at runtime from config.seo) -->
+    <!-- SEO (title/description mirrored at runtime from config.seo — see src/App.jsx) -->
     <title>Tam & Jenn — 28 March 2027 | Da Nang, Vietnam</title>
     <meta name="description" content="Join us to celebrate the wedding of Tam & Jenn in beautiful Da Nang, Vietnam." />
+
+    <!--
+      Social share preview (Messenger, Instagram, WhatsApp, iMessage, Facebook, etc).
+      These apps fetch this raw HTML and never run the site's JavaScript, so these
+      tags MUST be hardcoded here — keep them in sync with config.seo by hand.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tam & Jenn — 28 March 2027 | Da Nang, Vietnam" />
+    <meta property="og:description" content="Join us to celebrate the wedding of Tam & Jenn in beautiful Da Nang, Vietnam." />
+    <meta property="og:image" content="/images/tamjenn.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tam & Jenn — 28 March 2027 | Da Nang, Vietnam" />
+    <meta name="twitter:description" content="Join us to celebrate the wedding of Tam & Jenn in beautiful Da Nang, Vietnam." />
+    <meta name="twitter:image" content="/images/tamjenn.jpg" />
 
     <!-- Google Fonts are loaded at runtime from config.theme.fonts via useTheme(). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

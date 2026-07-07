@@ -71,7 +71,7 @@ export default function Home() {
           <Reveal className="home-two-col__media">
             <Link to="/venue" className="home-two-col__media-link" aria-label={`See more about ${config.venue.name}`}>
               <Placeholder label="Mikazuki Resorts" ratio="4/3" tone="sage" image={config.images.venueCardImage} alt={config.venue.name} />
-              <span className="home-two-col__media-hint" aria-hidden="true">See the venue →</span>
+              {/* <span className="home-two-col__media-hint" aria-hidden="true">See the venue →</span> */}
             </Link>
           </Reveal>
           <Reveal delay={0.1} className="home-two-col__copy">
@@ -90,7 +90,7 @@ export default function Home() {
           <Reveal className="home-two-col__media">
             <Link to="/travel" className="home-two-col__media-link" aria-label="Plan your trip — travel info">
               <Placeholder label="Da Nang, Vietnam" ratio="4/3" tone="sky" image={config.images.travelCardImage} alt="Da Nang, Vietnam" />
-              <span className="home-two-col__media-hint" aria-hidden="true">Plan your trip →</span>
+              {/* <span className="home-two-col__media-hint" aria-hidden="true">Plan your trip →</span> */}
             </Link>
           </Reveal>
           <Reveal delay={0.1} className="home-two-col__copy">
@@ -137,13 +137,12 @@ export default function Home() {
 
       {/* ─── DRESS CODE ─────────────────────────────────────── */}
       <section className="section section--beige">
-        <div className="container home-two-col">
+        <div className="container home-two-col home-two-col--dresscode">
           <Reveal className="home-two-col__copy">
             <span className="home-eyebrow">Dress Code</span>
             <h2>{config.dressCode.label}</h2>
             <p className="home-muted">{config.dressCode.subtitle}</p>
             <p>{config.dressCode.notes}</p>
-            <Link to="/dress-code" className="btn btn--primary">Dress code details →</Link>
           </Reveal>
           <Reveal delay={0.1} className="home-palette">
             {config.dressCode.palette.map((hex, i) => (
@@ -153,6 +152,9 @@ export default function Home() {
                 <code className="home-palette__hex">{String(hex).toUpperCase()}</code>
               </div>
             ))}
+          </Reveal>
+          <Reveal delay={0.15} className="home-dresscode__cta">
+            <Link to="/dress-code" className="btn btn--primary">Dress code details →</Link>
           </Reveal>
         </div>
       </section>

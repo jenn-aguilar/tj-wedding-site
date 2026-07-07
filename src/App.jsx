@@ -24,12 +24,25 @@ function ScrollToTop() {
   return null
 }
 
+/** Set a <meta> tag's content by name or property attribute, if it exists. */
+function setMeta(selector, content) {
+  const el = document.querySelector(selector)
+  if (el && content) el.setAttribute('content', content)
+}
+
 function DocumentTitle() {
   const { pathname } = useLocation()
   useEffect(() => {
     document.title = config.seo.title
-    const meta = document.querySelector('meta[name="description"]')
-    if (meta) meta.setAttribute('content', config.seo.description)
+    setMeta('meta[name="description"]', config.seo.description)
+    // Social share crawlers (Messenger, Instagram, etc.) read index.html directly
+    // and never run this — it only keeps the live DOM consistent with config.seo.
+    setMeta('meta[property="og:title"]', config.seo.title)
+    setMeta('meta[property="og:description"]', config.seo.description)
+    setMeta('meta[property="og:image"]', config.seo.ogImage)
+    setMeta('meta[name="twitter:title"]', config.seo.title)
+    setMeta('meta[name="twitter:description"]', config.seo.description)
+    setMeta('meta[name="twitter:image"]', config.seo.ogImage)
   }, [pathname])
   return null
 }
