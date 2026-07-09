@@ -292,7 +292,14 @@
   font-style: italic;
   color: var(--color-text-soft);
   font-size: var(--fs-sm);
-  margin: 0;
+  text-align: center;
+  margin: var(--sp-4) 0 0;
+  opacity: 1;
+  transition: opacity 500ms ease-out;
+}
+.landing__hint.is-hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* ─── PETALS ──────────────────────────────────────────────────────────── */

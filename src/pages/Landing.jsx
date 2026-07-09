@@ -95,11 +95,14 @@ export default function Landing() {
         )}
       </motion.div>
 
+      <p className={`landing__hint ${opened ? 'is-hidden' : ''}`} aria-hidden={opened}>
+        Click the seal of the envelope to open.
+      </p>
+
       <div className={`landing__cta ${showCta ? 'is-show' : ''}`}>
         <button id="enter" className="btn btn--primary" onClick={enter}>
           Enter the celebration →
         </button>
-        {!opened && <p className="landing__hint">Click the envelope to open your invitation</p>}
       </div>
     </main>
   )
