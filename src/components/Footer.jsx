@@ -8,6 +8,10 @@ const quickLinks = [
   { to: '/travel', label: 'Travel' },
   { to: '/timeline', label: 'Timeline' },
   { to: '/dress-code', label: 'Dress Code' },
+  { to: '/gallery', label: 'Gallery' },
+  { to: '/reminders', label: 'Reminders' },
+  { to: '/entourage', label: 'Entourage' },
+  { to: '/registry', label: 'Registry' },
   { to: '/rsvp', label: 'RSVP' },
 ]
 

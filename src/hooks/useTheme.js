@@ -13,6 +13,7 @@ export default function useTheme() {
   useEffect(() => {
     const root = document.documentElement
     const { colors, fonts } = config.theme
+    const nameFont = config.couple?.nameFont
 
     // ─── Colors ─────────────────────────────────────────
     Object.entries(colors).forEach(([key, value]) => {
@@ -20,8 +21,10 @@ export default function useTheme() {
     })
 
     // ─── Fonts ──────────────────────────────────────────
-    // Build a single Google Fonts URL from all three families
-    const familyParams = Object.values(fonts)
+    // Build a single Google Fonts URL from all families, including the
+    // couple-name override (if set) alongside the three theme fonts.
+    const allFonts = { ...fonts, ...(nameFont?.name ? { coupleName: nameFont } : {}) }
+    const familyParams = Object.values(allFonts)
       .filter((f) => f && f.name)
       .map((f) => {
         const family = f.name.trim().replace(/\s+/g, '+')
@@ -52,5 +55,19 @@ export default function useTheme() {
     fontVar('display', `'Georgia', serif`)
     fontVar('body',    `'Helvetica Neue', system-ui, sans-serif`)
     fontVar('script',  `'Brush Script MT', cursive`)
+
+    // Couple's name on the homepage hero — only set these when configured,
+    // so the CSS var(--font-couple-name, --font-display) fallback in
+    // Home.css picks up the site's normal display font/size otherwise.
+    if (nameFont?.name) {
+      root.style.setProperty('--font-couple-name', `'${nameFont.name}', var(--font-display)`)
+    } else {
+      root.style.removeProperty('--font-couple-name')
+    }
+    if (nameFont?.size) {
+      root.style.setProperty('--fs-couple-name', nameFont.size)
+    } else {
+      root.style.removeProperty('--fs-couple-name')
+    }
   }, [])
 }
